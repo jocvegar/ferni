@@ -3,7 +3,7 @@ import colors from "vuetify/es5/util/colors";
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    titleTemplate: "%s - ferni",
+    titleTemplate: "%s - Ferni",
     title: "ferni",
     meta: [
       { charset: "utf-8" },
@@ -47,6 +47,10 @@ export default {
   pwa: {
     manifest: {
       lang: "en",
+      name: "Alvarenga",
+      short_name: "Alvarenga",
+      theme_color: "#E0F2F1",
+      background_color: "#E0F2F1",
     },
   },
 
@@ -68,7 +72,9 @@ export default {
       },
     },
   },
-
+  generate: {
+    fallback: true,
+  },
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {},
 };
