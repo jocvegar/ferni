@@ -7,10 +7,31 @@
       </v-btn>
     </v-card-actions>
     <v-card-title><h2>Nuevo Paciente</h2></v-card-title>
+
+    <button @click="writeToFirestore">
+      <span>Write now</span>
+    </button>
   </v-card>
 </template>
 <script>
+import { db } from "~/plugins/firebase.js";
+import { doc, setDoc } from "firebase/firestore";
 export default {
   name: "PacienteNew",
+  methods: {
+    async writeToFirestore() {
+      const ref = doc(db, "testCollection", "testDoc");
+      const document = {
+        text: "Firebase 9 rocks!",
+      };
+      try {
+        await setDoc(ref, document);
+        alert("Success!");
+      } catch (e) {
+        alert("Error!");
+        console.error(e);
+      }
+    },
+  },
 };
 </script>
