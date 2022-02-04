@@ -52,6 +52,16 @@ export default {
       theme_color: "#E0F2F1",
       background_color: "#E0F2F1",
     },
+    workbox: {
+      runtimeCaching: [
+        {
+          urlPattern: "https://jsonplaceholder.typicode.com/.*",
+          handler: "cacheFirst",
+          method: "GET",
+          strategyOptions: { cacheableResponse: { statuses: [0, 200] } },
+        },
+      ],
+    },
   },
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
