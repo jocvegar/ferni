@@ -32,7 +32,6 @@ export default {
     const users = await $axios.$get(
       "https://jsonplaceholder.typicode.com/users"
     );
-
     // const desserts = [
     //   {
     //     name: "Frozen Yogurt",

@@ -53,7 +53,7 @@
       <v-btn icon @click.stop="leftDrawer = !leftDrawer" v-else>
         <v-icon>mdi-{{ `chevron-${leftDrawer ? "right" : "left"}` }}</v-icon>
       </v-btn>
-      <v-toolbar-title v-text="title" />
+      <v-toolbar-title v-text="title" @click="handleLogoClick()" />
       <v-spacer />
       <v-btn icon @click.stop="rightDrawer = !rightDrawer">
         <v-icon>mdi-menu</v-icon>
@@ -103,6 +103,19 @@ export default {
       leftDrawer: false,
       title: "Dr. Alvarenga",
     };
+  },
+  methods: {
+    handleLogoClick() {
+      if (this.$route.path !== "/") {
+        this.$router.push("/");
+      } else {
+        window.scroll({
+          top: 0,
+          left: 0,
+          behavior: "smooth",
+        });
+      }
+    },
   },
 };
 </script>
