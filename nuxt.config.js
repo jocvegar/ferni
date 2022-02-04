@@ -60,6 +60,13 @@ export default {
           method: "GET",
           strategyOptions: { cacheableResponse: { statuses: [0, 200] } },
         },
+        {
+          urlPattern:
+            "https://firestore.googleapis.com/google.firestore.v1.Firestore/Listen/*",
+          handler: "cacheFirst",
+          method: "GET",
+          strategyOptions: { cacheableResponse: { statuses: [0, 200] } },
+        },
       ],
     },
   },
