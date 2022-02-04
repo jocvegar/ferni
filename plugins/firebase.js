@@ -21,15 +21,17 @@ if (!apps.length) {
 }
 
 const db = getFirestore();
-enableIndexedDbPersistence(db).catch((err) => {
-  if (err.code == "failed-precondition") {
-    // Multiple tabs open, persistence can only be enabled
-    // in one tab at a a time.
-    // ...
-  } else if (err.code == "unimplemented") {
-    // The current browser does not support all of the
-    // features required to enable persistence
-    // ...
-  }
-});
+
+if (process.env.NODE_ENV === "production") {
+  enableIndexedDbPersistence(db, {
+    experimentalTabSynchronization: true,
+  }).catch((err) => {
+    if (err.code == "failed-precondition") {
+      console.log("err", err);
+    } else if (err.code == "unimplemented") {
+      console.log("err", err);
+    }
+  });
+}
+
 export { db };
