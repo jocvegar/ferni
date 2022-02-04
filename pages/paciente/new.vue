@@ -20,9 +20,9 @@ export default {
   name: "PacienteNew",
   methods: {
     async writeToFirestore() {
-      const ref = doc(db, "testCollection", "testDoc");
+      const ref = doc(db, "testCollection", "testDoc1");
       const document = {
-        text: "Firebase 9 rocks!",
+        text: "Firebase 9 rocks1!",
       };
       try {
         await setDoc(ref, document);
