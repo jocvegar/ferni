@@ -1,5 +1,5 @@
 import { initializeApp, getApps } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
+// import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
 const config = require("../firebaseConfig.js");
 
@@ -17,7 +17,7 @@ const apps = getApps();
 let firebaseApp;
 if (!apps.length) {
   firebaseApp = initializeApp(firebaseConfig);
-  getAnalytics(firebaseApp);
+  // getAnalytics(firebaseApp);
 } else {
   firebaseApp = apps[0];
 }
