@@ -1,51 +1,48 @@
 <template>
-  <v-form>
-    <v-container>
-      <v-row>
-        <v-col cols="12" md="6">
-          <v-text-field label="Email" v-model="email"></v-text-field>
-          <v-text-field label="Password" v-model="password"></v-text-field>
-        </v-col>
-        <v-col cols="12" md="6">
-          <v-btn @click="login()">
-            <v-icon left>mdi-account-check</v-icon>
-            Login
-          </v-btn>
-        </v-col>
-      </v-row>
-    </v-container>
-  </v-form>
+  <v-card class="pa-8 ma-8 my-12">
+    <form>
+      <v-text-field v-model.trim="email" label="E-mail" required></v-text-field>
+      <v-text-field
+        :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+        v-model.trim="password"
+        label="Pasword"
+        required
+        :type="showPassword ? 'text' : 'password'"
+        @click:append="showPassword = !showPassword"
+      >
+      </v-text-field>
+      <v-btn class="mr-4" @click="userSignIn"> submit </v-btn>
+    </form>
+  </v-card>
 </template>
-<script>
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "~/plugins/firebase.js";
 
+<script>
 export default {
-  name: "Login",
   data() {
     return {
       email: "",
       password: "",
+      showPassword: false,
     };
   },
-  mounted() {
-    // console.log("auth.currentUser", auth.currentUser);
-    // if (auth.currentUser) {
-    //   this.$router.push("/");
-    // }
+  created() {
+    if (this.$store.state.user) this.$router.push("/");
   },
   methods: {
-    async login() {
-      const credentials = await signInWithEmailAndPassword(
-        auth,
-        this.email,
-        this.password
-      );
-      if (credentials.user) {
-        console.log("credentials", credentials);
-        this.$store.commit("setUser", credentials.user);
-        this.$router.push("/");
-      }
+    userSignIn() {
+      this.$store
+        .dispatch("signInWithEmail", {
+          email: this.email,
+          password: this.password,
+        })
+        .then(() => {
+          this.$router.push("/");
+          this.email = "";
+          this.password = "";
+        })
+        .catch((err) => {
+          console(err.message);
+        });
     },
   },
 };

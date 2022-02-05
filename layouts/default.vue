@@ -70,7 +70,9 @@
           <v-list-item-action>
             <v-icon light>mdi-account-cancel</v-icon>
           </v-list-item-action>
-          <v-list-item-title>LogOut Stuff</v-list-item-title>
+          <v-list-item-title @click.stop="signOut()">
+            Log out
+          </v-list-item-title>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
@@ -115,6 +117,12 @@ export default {
           behavior: "smooth",
         });
       }
+    },
+    signOut(err) {
+      this.$store.dispatch("signOut").catch((err) => {
+        alert(err.message);
+      });
+      this.$router.push("/login");
     },
   },
 };

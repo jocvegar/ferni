@@ -26,12 +26,16 @@
 </template>
 
 <script>
+import auth from "@/mixins/authMixin";
+
 export default {
   name: "Index",
+  mixins: [auth],
   async asyncData({ $axios }) {
     const users = await $axios.$get(
       "https://jsonplaceholder.typicode.com/users"
     );
+
     // const desserts = [
     //   {
     //     name: "Frozen Yogurt",

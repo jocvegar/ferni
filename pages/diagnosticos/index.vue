@@ -17,8 +17,11 @@
 <script>
 import { db } from "~/plugins/firebase.js";
 import { doc, getDoc } from "firebase/firestore";
+import auth from "@/mixins/authMixin";
+
 export default {
   name: "DiagnosticosIndex",
+  mixins: [auth],
   async asyncData() {
     const docRef = doc(db, "testCollection", "testDoc");
     const docSnap = await getDoc(docRef);

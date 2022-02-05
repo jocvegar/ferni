@@ -1,5 +1,7 @@
 import { initializeApp, getApps } from "firebase/app";
 import { getFirestore, enableIndexedDbPersistence } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+
 const config = require("../firebaseConfig.js");
 
 const firebaseConfig = {
@@ -21,6 +23,7 @@ if (!apps.length) {
 }
 
 const db = getFirestore();
+const auth = getAuth();
 
 if (process.env.NODE_ENV === "production") {
   enableIndexedDbPersistence(db, {
@@ -34,4 +37,4 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-export { db };
+export { db, auth };

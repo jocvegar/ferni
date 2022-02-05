@@ -16,8 +16,11 @@
 <script>
 import { db } from "~/plugins/firebase.js";
 import { doc, setDoc } from "firebase/firestore";
+import auth from "@/mixins/authMixin";
+
 export default {
   name: "PacienteNew",
+  mixins: [auth],
   methods: {
     async writeToFirestore() {
       const ref = doc(db, "testCollection", "testDoc1");
