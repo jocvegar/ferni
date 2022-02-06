@@ -18,10 +18,27 @@
       ></v-text-field>
     </v-card-title>
     <v-data-table :headers="headers" :items="pacientes" :search="search">
+      <template v-slot:[`item.nombre`]="{ item }">
+        <NuxtLink
+          :to="`/paciente/${item.id}`"
+          class="font-weight-medium text-decoration-none black--text"
+        >
+          {{ item.nombre }}
+        </NuxtLink>
+      </template>
+
       <template v-slot:[`item.fecha_de_nacimiento`]="{ item }">
         {{ getAge(item.fecha_de_nacimiento) }}
-      </template></v-data-table
-    >
+      </template>
+      <template v-slot:[`item.show`]="{ item }">
+        <NuxtLink
+          :to="`/paciente/${item.id}`"
+          class="text-decoration-none black--text"
+        >
+          <v-chip color="blue" outlined pill>Ver paciente</v-chip>
+        </NuxtLink>
+      </template>
+    </v-data-table>
   </v-card>
 </template>
 
@@ -69,19 +86,23 @@ export default {
         { text: "Dedicación", value: "a_que_se_dedica" },
         { text: "Pasatiempos", value: "pasatiempos" },
         { text: "Procedencia", value: "procedencia" },
+        {
+          text: "Ir a paciente",
+          value: "show",
+          sortable: false,
+        },
       ],
     };
   },
   methods: {
     getAge(dob) {
       if (dob) {
+        let dobFormat = dob?.replace(/-/g, ",");
         const today = new Date();
-        const birthDate = new Date(dob?.seconds * 1000);
+        const birthDate = new Date(dobFormat);
         let age = today.getFullYear() - birthDate.getFullYear();
         const m = today.getMonth() - birthDate.getMonth();
-        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-          age--;
-        }
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
         return age;
       } else {
         return "sin información";

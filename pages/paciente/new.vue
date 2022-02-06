@@ -6,34 +6,184 @@
         Atras
       </v-btn>
     </v-card-actions>
-    <v-card-title><h2>Nuevo Paciente</h2></v-card-title>
-
-    <button @click="writeToFirestore">
-      <span>Write now</span>
-    </button>
+    <v-card-title><h2>Paciente Nuevo</h2></v-card-title>
+    <v-card-text>
+      <v-container>
+        <v-snackbar top :timeout="3000" v-model="snackbar">
+          {{ snackbarText }}
+        </v-snackbar>
+        <v-row align="end">
+          <v-col cols="12" md="6">
+            <v-text-field
+              label="Nombre"
+              v-model.trim="paciente.nombre"
+              outlined
+              class="py-0"
+              :error-messages="nombreErrors"
+              @input="$v.paciente.nombre.$touch()"
+              @blur="$v.paciente.nombre.$touch()"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12" md="6">
+            <v-menu
+              v-model="dateMenu"
+              :close-on-content-click="false"
+              :nudge-right="40"
+              transition="scale-transition"
+              offset-y
+              min-width="auto"
+              @blur="dateMenu = true"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  label="Fecha de Nacimiento"
+                  readonly
+                  v-bind="attrs"
+                  v-on="on"
+                  :value="computedDateFormatted"
+                  outlined
+                  class="py-0"
+                ></v-text-field>
+              </template>
+              <v-date-picker
+                v-model="paciente.fecha_de_nacimiento"
+                @input="dateMenu = false"
+                locale="es-us"
+                no-title
+                scrollable
+                :max="new Date().toISOString().slice(0, 10)"
+              ></v-date-picker>
+            </v-menu>
+          </v-col>
+          <v-col cols="12" md="6">
+            <v-text-field
+              label="Antecedentes"
+              v-model.trim="paciente.antecedentes"
+              outlined
+              class="py-0"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12" md="6">
+            <v-text-field
+              label="¿A qué se dedica?"
+              v-model.trim="paciente.a_que_se_dedica"
+              outlined
+              class="py-0"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12" md="6">
+            <v-text-field
+              label="Pasatiempos"
+              v-model.trim="paciente.pasatiempos"
+              outlined
+              class="py-0"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12" md="6">
+            <v-text-field
+              label="Procedencia"
+              v-model.trim="paciente.procedencia"
+              outlined
+              class="py-0"
+            ></v-text-field>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="12">
+            <v-text-field
+              label="Información clinica"
+              v-model.trim="informacion_clinica"
+              outlined
+              class="py-0"
+            ></v-text-field>
+          </v-col>
+        </v-row>
+        <v-row class="pa-0 ma-0 mt-2">
+          <v-col cols="12">
+            <v-divider></v-divider>
+          </v-col>
+          <v-col cols="6" offset="3">
+            <v-row align="center" justify="end">
+              <v-btn @click="submit()" class="mt-4" color="primary" block>
+                Guardar
+              </v-btn>
+            </v-row>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-card-text>
   </v-card>
 </template>
 <script>
 import { db } from "~/plugins/firebase.js";
-import { doc, setDoc } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import auth from "@/mixins/authMixin";
+import { validationMixin } from "vuelidate";
+import { required } from "vuelidate/lib/validators";
 
 export default {
   name: "PacienteNew",
-  mixins: [auth],
+  mixins: [auth, validationMixin],
+
+  validations: {
+    paciente: {
+      nombre: { required },
+    },
+  },
+  data() {
+    return {
+      dateMenu: false,
+      snackbarText: "",
+      snackbar: false,
+      paciente: {
+        nombre: "",
+        fecha_de_nacimiento: "",
+        antecedentes: "",
+        a_que_se_dedica: "",
+        pasatiempos: "",
+        procedencia: "",
+      },
+      informacion_clinica: "",
+    };
+  },
   methods: {
-    async writeToFirestore() {
-      const ref = doc(db, "testCollection", "testDoc1");
-      const document = {
-        text: "Firebase 9 rocks1!",
-      };
+    async submit() {
+      this.$v.$touch();
+      if (this.$v.paciente.$invalid) return;
       try {
-        await setDoc(ref, document);
-        alert("Success!");
-      } catch (e) {
-        alert("Error!");
-        console.error(e);
+        await addDoc(collection(db, "pacientes"), this.paciente).then((doc) => {
+          if (this.informacion_clinica.length > 0) {
+            addDoc(collection(db, `pacientes/${doc.id}/informacion_clinica`), {
+              userId: doc.id,
+              informacion_clinica: this.informacion_clinica,
+              fecha: serverTimestamp(),
+            });
+          }
+          this.$router.push(`/paciente/${doc.id}`);
+        });
+      } catch (err) {
+        this.snackbarText =
+          "Ocurrió un error inesperado, inténtelo nuevamente.";
+        this.snackbar = true;
+        console.log("error", err);
       }
+    },
+    formatDate(date) {
+      if (!date) return null;
+
+      const [year, month, day] = date.split("-");
+      return `${month}/${day}/${year}`;
+    },
+  },
+  computed: {
+    computedDateFormatted() {
+      return this.formatDate(this.paciente.fecha_de_nacimiento);
+    },
+    nombreErrors() {
+      const errors = [];
+      if (!this.$v.paciente.nombre.$dirty) return errors;
+      !this.$v.paciente.nombre.required && errors.push("Nombre es requerido");
+      return errors;
     },
   },
 };
