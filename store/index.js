@@ -1,9 +1,10 @@
 import { auth } from "~/plugins/firebase.js";
 import { signOut, signInWithEmailAndPassword } from "firebase/auth";
 
-// state
 export const state = () => ({
   user: null,
+  snackbarText: "",
+  snackbar: false,
 });
 
 export const getters = {
@@ -15,7 +16,6 @@ export const getters = {
   },
 };
 
-// actions
 export const actions = {
   setUser({ commit }, payload) {
     commit("SET_USER", payload);
@@ -28,10 +28,16 @@ export const actions = {
   },
 };
 
-// mutations
 export const mutations = {
   SET_USER(state, user) {
     state.user = user;
+  },
+  SET_SNACKBAR(state, payload) {
+    state.snackbar = true;
+    state.snackbarText = payload;
+  },
+  CLOSE_SNACKBAR(state) {
+    state.snackbar = false;
   },
 };
 

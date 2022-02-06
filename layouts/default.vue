@@ -61,18 +61,38 @@
     </v-app-bar>
     <v-main>
       <v-container fluid>
+        <v-snackbar
+          top
+          :timeout="3000"
+          v-model="snackbar"
+          rounded="pill"
+          color="blue"
+        >
+          <span class="text-center"> {{ snackbarText }}</span>
+          <template v-slot:action="{ attrs }">
+            <v-btn icon v-bind="attrs" @click="closeSnackBar()">
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
+          </template>
+        </v-snackbar>
         <Nuxt />
       </v-container>
     </v-main>
     <v-navigation-drawer v-model="rightDrawer" right temporary fixed>
       <v-list>
-        <v-list-item>
+        <v-list-item v-if="isAuthenticated">
           <v-list-item-action>
             <v-icon light>mdi-account-cancel</v-icon>
           </v-list-item-action>
           <v-list-item-title @click.stop="signOut()">
             Log out
           </v-list-item-title>
+        </v-list-item>
+        <v-list-item v-else>
+          <v-list-item-action>
+            <v-icon light>mdi-login</v-icon>
+          </v-list-item-action>
+          <v-list-item-title @click.stop="signIn()"> Log in </v-list-item-title>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
@@ -83,6 +103,8 @@
 </template>
 
 <script>
+import { mapState, mapGetters } from "vuex";
+
 export default {
   name: "DefaultLayout",
   data() {
@@ -118,12 +140,22 @@ export default {
         });
       }
     },
-    signOut(err) {
+    signOut() {
       this.$store.dispatch("signOut").catch((err) => {
         alert(err.message);
       });
       this.$router.push("/login");
     },
+    signIn() {
+      this.$router.push("/login");
+    },
+    closeSnackBar() {
+      this.$store.commit("CLOSE_SNACKBAR");
+    },
+  },
+  computed: {
+    ...mapState(["snackbarText", "snackbar"]),
+    ...mapGetters(["isAuthenticated"]),
   },
 };
 </script>

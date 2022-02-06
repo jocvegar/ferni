@@ -66,14 +66,6 @@ export default {
               id: change.doc.id,
               ...change.doc.data(),
             });
-            if (change.type === "added") {
-              console.log("New city: ", change.doc.data());
-            }
-
-            const source = snapshot.metadata.fromCache
-              ? "local cache"
-              : "server";
-            console.log("Data came from " + source);
           });
           resolve({ pacientes });
         }

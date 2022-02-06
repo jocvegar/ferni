@@ -9,9 +9,6 @@
     <v-card-title><h2>Paciente Nuevo</h2></v-card-title>
     <v-card-text>
       <v-container>
-        <v-snackbar top :timeout="3000" v-model="snackbar">
-          {{ snackbarText }}
-        </v-snackbar>
         <v-row align="end">
           <v-col cols="12" md="6">
             <v-text-field
@@ -122,9 +119,11 @@ import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
 
 export default {
-  name: "PacienteNew",
+  name: "NuevoPaciente",
   mixins: [auth, validationMixin],
-
+  head: {
+    title: "Nuevo Paciente",
+  },
   validations: {
     paciente: {
       nombre: { required },
@@ -133,8 +132,6 @@ export default {
   data() {
     return {
       dateMenu: false,
-      snackbarText: "",
-      snackbar: false,
       paciente: {
         nombre: "",
         fecha_de_nacimiento: "",
@@ -145,6 +142,9 @@ export default {
       },
       informacion_clinica: "",
     };
+  },
+  mounted() {
+    console.log("$nuxt.isOffline", $nuxt.isOffline);
   },
   methods: {
     async submit() {
@@ -159,12 +159,21 @@ export default {
               fecha: serverTimestamp(),
             });
           }
-          this.$router.push(`/paciente/${doc.id}`);
+          if (this.$nuxt.isOffline) {
+            this.$router.push("/");
+            this.$store.commit(
+              "SET_SNACKBAR",
+              "Estas sin conexión, los datos y el diagnóstico se aparecerán cuando vuelvas a conectarte"
+            );
+          } else {
+            this.$router.push(`/paciente/${doc.id}`);
+          }
         });
       } catch (err) {
-        this.snackbarText =
-          "Ocurrió un error inesperado, inténtelo nuevamente.";
-        this.snackbar = true;
+        this.$store.commit(
+          "SET_SNACKBAR",
+          "Ocurrió un error inesperado, inténtelo nuevamente."
+        );
         console.log("error", err);
       }
     },
