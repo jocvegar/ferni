@@ -61,11 +61,19 @@ export default {
         pacientesDocRef,
         { includeMetadataChanges: true },
         (snapshot) => {
-          snapshot.forEach((doc) => {
+          snapshot.docChanges().forEach((change) => {
             pacientes.push({
-              id: doc.id,
-              ...doc.data(),
+              id: change.doc.id,
+              ...change.doc.data(),
             });
+            if (change.type === "added") {
+              console.log("New city: ", change.doc.data());
+            }
+
+            const source = snapshot.metadata.fromCache
+              ? "local cache"
+              : "server";
+            console.log("Data came from " + source);
           });
           resolve({ pacientes });
         }
