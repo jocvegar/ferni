@@ -14,6 +14,12 @@ export const getters = {
   isAuthenticated(state) {
     return !!state.user;
   },
+  snackbar(state) {
+    return state.snackbar;
+  },
+  snackbarText(state) {
+    return state.snackbarText;
+  },
 };
 
 export const actions = {

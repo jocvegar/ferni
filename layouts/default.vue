@@ -68,7 +68,7 @@
           rounded="pill"
           color="blue"
         >
-          <span class="text-center"> {{ snackbarText }}</span>
+          {{ snackbarText }}
           <template v-slot:action="{ attrs }">
             <v-btn icon v-bind="attrs" @click="closeSnackBar()">
               <v-icon>mdi-close</v-icon>
@@ -103,7 +103,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from "vuex";
+import { mapGetters } from "vuex";
 
 export default {
   name: "DefaultLayout",
@@ -154,8 +154,7 @@ export default {
     },
   },
   computed: {
-    ...mapState(["snackbarText", "snackbar"]),
-    ...mapGetters(["isAuthenticated"]),
+    ...mapGetters(["isAuthenticated", "snackbar", "snackbarText"]),
   },
 };
 </script>

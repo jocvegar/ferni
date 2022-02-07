@@ -6,6 +6,9 @@
         Paciente Nuevo
       </v-btn>
     </v-card-actions>
+    <br />
+    <br />
+    <br />
     <v-card-title><h2>Pacientes</h2></v-card-title>
     <br />
     <v-card-title>

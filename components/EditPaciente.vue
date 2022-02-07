@@ -1,15 +1,18 @@
 <template>
   <v-card elevation="0">
-    <v-card-actions class="float-right">
-      <v-btn color="primary" elevation="2" raised to="/" nuxt outlined>
-        <v-icon>mdi-chevron-left</v-icon>
-        Atras
+    <v-card-title
+      ><h2>Editar Paciente</h2>
+      <v-btn
+        style="right: 15px; top: 10px"
+        icon
+        color="primary"
+        fab
+        absolute
+        @click="$emit('cancel')"
+      >
+        <v-icon dark>mdi-close</v-icon>
       </v-btn>
-    </v-card-actions>
-    <br />
-    <br />
-    <br />
-    <v-card-title><h2>Paciente Nuevo</h2></v-card-title>
+    </v-card-title>
     <v-card-text>
       <v-container>
         <v-row align="end">
@@ -88,24 +91,27 @@
             ></v-text-field>
           </v-col>
         </v-row>
-        <v-row>
-          <v-col cols="12">
-            <v-text-field
-              label="Información clinica"
-              v-model.trim="informacion_clinica"
-              outlined
-              class="py-0"
-            ></v-text-field>
-          </v-col>
-        </v-row>
-        <v-row class="pa-0 ma-0 mt-2">
+        <v-row class="pa-0 ma-0 mt-2" justify="center">
           <v-col cols="12">
             <v-divider></v-divider>
           </v-col>
-          <v-col cols="6" offset="3">
-            <v-row align="center" justify="end">
-              <v-btn @click="submit()" class="mt-4" color="primary" block>
-                Guardar
+          <v-col cols="6" class="px-6">
+            <v-row justify="center">
+              <v-btn
+                @click="$emit('cancel')"
+                class="mt-4"
+                color="primary"
+                block
+                outlined
+              >
+                Canclar
+              </v-btn>
+            </v-row>
+          </v-col>
+          <v-col cols="6" class="px-6">
+            <v-row justify="center">
+              <v-btn @click="update()" class="mt-4" color="primary" block>
+                Editar
               </v-btn>
             </v-row>
           </v-col>
@@ -114,15 +120,15 @@
     </v-card-text>
   </v-card>
 </template>
+
 <script>
-import { db } from "~/plugins/firebase.js";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import auth from "@/mixins/authMixin";
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
+import auth from "@/mixins/authMixin";
+import { db } from "~/plugins/firebase.js";
+import { doc, updateDoc } from "firebase/firestore";
 
 export default {
-  name: "NuevoPaciente",
   mixins: [auth, validationMixin],
   head: {
     title: "Nuevo Paciente",
@@ -132,42 +138,37 @@ export default {
       nombre: { required },
     },
   },
+  props: {
+    paciente: {
+      type: Object,
+      required: true,
+    },
+  },
   data() {
     return {
       dateMenu: false,
-      paciente: {
-        nombre: "",
-        fecha_de_nacimiento: "",
-        antecedentes: "",
-        a_que_se_dedica: "",
-        pasatiempos: "",
-        procedencia: "",
-      },
-      informacion_clinica: "",
     };
   },
   methods: {
-    async submit() {
+    formatDate(date) {
+      if (!date) return null;
+      const [year, month, day] = date.split("-");
+      return `${month}/${day}/${year}`;
+    },
+    async update() {
       this.$v.$touch();
       if (this.$v.paciente.$invalid) return;
+      const ref = doc(db, "pacientes", this.paciente.id);
+
       try {
-        await addDoc(collection(db, "pacientes"), this.paciente).then((doc) => {
-          if (this.informacion_clinica.length > 0) {
-            addDoc(collection(db, `pacientes/${doc.id}/informacion_clinica`), {
-              userId: doc.id,
-              informacion_clinica: this.informacion_clinica,
-              fecha: serverTimestamp(),
-            });
-          }
+        await updateDoc(ref, this.paciente).then(() => {
           if (this.$nuxt.isOffline) {
-            this.$router.push("/");
             this.$store.commit(
               "SET_SNACKBAR",
-              "Estas sin conexión, los datos y el diagnóstico se aparecerán cuando vuelvas a conectarte"
+              "Estas sin conexión, los datos aparecerán cuando vuelvas a conectarte"
             );
-          } else {
-            this.$router.push(`/paciente/${doc.id}`);
           }
+          this.$emit("success", "Actualizado");
         });
       } catch (err) {
         this.$store.commit(
@@ -176,12 +177,6 @@ export default {
         );
         console.log("error", err);
       }
-    },
-    formatDate(date) {
-      if (!date) return null;
-
-      const [year, month, day] = date.split("-");
-      return `${month}/${day}/${year}`;
     },
   },
   computed: {

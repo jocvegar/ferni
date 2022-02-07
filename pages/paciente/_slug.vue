@@ -5,11 +5,32 @@
         <v-icon>mdi-chevron-left</v-icon>
         Atras
       </v-btn>
+      <v-btn
+        color="primary"
+        elevation="2"
+        raised
+        @click="edit()"
+        v-if="paciente"
+      >
+        <v-icon>mdi-pencil-outline </v-icon>
+        Editar
+      </v-btn>
     </v-card-actions>
+    <br />
+    <br />
+    <br />
     <v-card-title>
       <h2>{{ paciente.nombre }}</h2>
     </v-card-title>
     <v-card-text> informacion: {{ informacion }} </v-card-text>
+    <v-dialog persistent v-model="editModal" max-width="90vw">
+      <edit-paciente
+        @cancel="editModal = false"
+        @success="handleSuccess"
+        :key="randomKey"
+        :paciente="paciente"
+      ></edit-paciente>
+    </v-dialog>
   </v-card>
 </template>
 
@@ -18,6 +39,12 @@ import { db } from "~/plugins/firebase.js";
 import { doc, getDoc, getDocs, collection } from "firebase/firestore";
 
 export default {
+  data() {
+    return {
+      randomKey: 0,
+      editModal: false,
+    };
+  },
   async asyncData({ params }) {
     const docRef = doc(db, "pacientes", params.slug);
     const docSnap = await getDoc(docRef);
@@ -35,6 +62,16 @@ export default {
       console.log("No such document!");
     }
     return { paciente, informacion };
+  },
+  methods: {
+    edit() {
+      this.randomKey = Math.random();
+      this.editModal = true;
+    },
+    handleSuccess(data) {
+      this.editModal = false;
+      this.$store.commit("SET_SNACKBAR", data);
+    },
   },
 };
 </script>
