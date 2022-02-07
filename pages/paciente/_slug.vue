@@ -37,8 +37,13 @@
 <script>
 import { db } from "~/plugins/firebase.js";
 import { doc, getDoc, getDocs, collection } from "firebase/firestore";
+import auth from "@/mixins/authMixin";
 
 export default {
+  mixins: [auth],
+  head: {
+    title: this?.paciente?.nombre || "Paciente",
+  },
   data() {
     return {
       randomKey: 0,

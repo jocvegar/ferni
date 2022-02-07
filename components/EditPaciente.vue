@@ -130,9 +130,6 @@ import { doc, updateDoc } from "firebase/firestore";
 
 export default {
   mixins: [auth, validationMixin],
-  head: {
-    title: "Nuevo Paciente",
-  },
   validations: {
     paciente: {
       nombre: { required },
