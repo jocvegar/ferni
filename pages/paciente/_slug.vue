@@ -83,6 +83,8 @@
       :items="cleanInformaciones"
       :loading="$fetchState.pending"
       item-key="id"
+      :sort-by="['formatDate']"
+      :sort-desc="true"
     >
       <template v-slot:[`item.fecha`]="{ item }">
         {{ item.fecha | formatDate }}
