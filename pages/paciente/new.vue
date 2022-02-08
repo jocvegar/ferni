@@ -9,7 +9,9 @@
     <br />
     <br />
     <br />
-    <v-card-title><h2>Paciente Nuevo</h2></v-card-title>
+    <v-card-title>
+      <span class="headline mb-4"> Paciente Nuevo </span>
+    </v-card-title>
     <v-card-text>
       <v-container>
         <v-row align="end">

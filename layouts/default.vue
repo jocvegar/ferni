@@ -116,11 +116,6 @@ export default {
           title: "Pacientes",
           to: "/",
         },
-        {
-          icon: "mdi-prescription",
-          title: "Diagnósticos",
-          to: "/diagnosticos",
-        },
       ],
       miniVariant: true,
       rightDrawer: false,

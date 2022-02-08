@@ -1,7 +1,7 @@
 <template>
   <v-card elevation="0">
-    <v-card-title
-      ><h2>Editar Paciente</h2>
+    <v-card-title>
+      <span class="headline mb-4"> Editar Paciente </span>
       <v-btn
         style="right: 15px; top: 10px"
         icon

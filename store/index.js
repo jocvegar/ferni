@@ -41,6 +41,9 @@ export const mutations = {
   SET_SNACKBAR(state, payload) {
     state.snackbar = true;
     state.snackbarText = payload;
+    setTimeout(() => {
+      state.snackbar = false;
+    }, 3000);
   },
   CLOSE_SNACKBAR(state) {
     state.snackbar = false;

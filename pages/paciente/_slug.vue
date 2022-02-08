@@ -19,12 +19,12 @@
     <br />
     <br />
     <br />
-    <v-card-title class="text-h5">
-      {{ paciente.nombre }}
+    <v-card-title>
+      <span class="headline mb-4">
+        {{ paciente.nombre }}
+      </span>
     </v-card-title>
-
     <v-divider class="mb-4"></v-divider>
-
     <v-row>
       <v-col cols="12" md="6">
         <v-list-item-title class="mb-1 ml-3">
@@ -64,6 +64,7 @@
           elevation="2"
           rounded
           class="float-right mr-md-6"
+          @click="addEditInfo('new', null)"
         >
           <v-icon>mdi-plus</v-icon>
           Agregar Informacion
@@ -77,7 +78,12 @@
       </v-col>
     </v-row>
 
-    <v-data-table :headers="headers" :items="informacion">
+    <v-data-table
+      :headers="headers"
+      :items="cleanInformaciones"
+      :loading="$fetchState.pending"
+      item-key="id"
+    >
       <template v-slot:[`item.fecha`]="{ item }">
         {{ item.fecha | formatDate }}
       </template>
@@ -89,7 +95,7 @@
           elevation="2"
           outlined
           rounded
-          @click="deleteInfo(item)"
+          @click="deleteInfo(item.id)"
         >
           Eliminar
         </v-btn>
@@ -100,6 +106,7 @@
           elevation="2"
           outlined
           rounded
+          @click="addEditInfo('edit', item)"
         >
           Editar
         </v-btn>
@@ -114,6 +121,19 @@
         :paciente="paciente"
       ></edit-paciente>
     </v-dialog>
+
+    <v-dialog persistent v-model="addEditModal" max-width="70vw">
+      <add-edit-information
+        @cancel="addEditModal = false"
+        @success="handleSuccess"
+        @refresh="refresh()"
+        :key="randomKey"
+        :paciente="paciente"
+        :item="item"
+        :type="type"
+        :parentId="paciente.id"
+      ></add-edit-information>
+    </v-dialog>
   </v-card>
 </template>
 
@@ -122,9 +142,9 @@ import { db } from "~/plugins/firebase.js";
 import {
   doc,
   getDoc,
-  getDocs,
   collection,
   deleteDoc,
+  onSnapshot,
 } from "firebase/firestore";
 import auth from "@/mixins/authMixin";
 
@@ -138,6 +158,10 @@ export default {
       informacion: [],
       randomKey: 0,
       editModal: false,
+      item: null,
+      type: "",
+      addEditModal: false,
+      informaciones: [],
       headers: [
         { text: "Fecha", value: "fecha" },
         { text: "Información", value: "informacion_clinica" },
@@ -149,27 +173,52 @@ export default {
     const docRef = doc(db, "pacientes", params.slug);
     const docSnap = await getDoc(docRef);
     let paciente = null;
-    let informacion = [];
     if (docSnap.exists()) {
       paciente = Object.assign({ id: docSnap.id }, docSnap.data());
-      const querySnapshot = await getDocs(
-        collection(db, "pacientes", params.slug, "informacion_clinica")
-      );
-      querySnapshot.forEach((doc) => {
-        informacion.push(Object.assign({ id: doc.id }, doc.data()));
-      });
     } else {
       console.log("No such document!");
     }
-    return { paciente, informacion };
+    return { paciente };
   },
+  async fetch() {
+    const informationDocRef = collection(
+      db,
+      "pacientes",
+      this.paciente.id,
+      "informacion_clinica"
+    );
+
+    return new Promise((resolve, reject) => {
+      onSnapshot(
+        informationDocRef,
+        { includeMetadataChanges: true },
+        (snapshot) => {
+          snapshot.docChanges().forEach((change) => {
+            this.informaciones.push({
+              id: change.doc.id,
+              ...change.doc.data(),
+            });
+          });
+          resolve({ informaciones: this.informaciones });
+        }
+      );
+    });
+  },
+  fetchOnServer: false,
   methods: {
     edit() {
       this.randomKey = Math.random();
       this.editModal = true;
     },
+    addEditInfo(type, item) {
+      this.type = type;
+      this.item = item;
+      this.randomKey = Math.random();
+      this.addEditModal = true;
+    },
     handleSuccess(data) {
       this.editModal = false;
+      this.addEditModal = false;
       this.$store.commit("SET_SNACKBAR", data);
     },
     getAge(dob) {
@@ -185,26 +234,47 @@ export default {
         return "sin información";
       }
     },
-    async deleteInfo(item) {
+    async deleteInfo(itemId) {
       if (confirm(`¿Estás seguro de eliminar?`)) {
-        await deleteDoc(
-          doc(
-            db,
-            "pacientes",
-            `${this.paciente.id}/informacion_clinica`,
-            item.id
-          )
-        ).then(async () => {
-          this.$store.commit("SET_SNACKBAR", "Información eliminada");
-          await this.$nuxt.refresh();
-        });
+        try {
+          await deleteDoc(
+            doc(
+              db,
+              "pacientes",
+              `${this.paciente.id}/informacion_clinica`,
+              itemId
+            )
+          ).then(async () => {
+            this.$store.commit("SET_SNACKBAR", "Información eliminada");
+
+            this.informaciones = this.informaciones.filter(function (el) {
+              return el.id != itemId;
+            });
+          });
+        } catch {
+          this.$store.commit(
+            "SET_SNACKBAR",
+            "Ocurrió un error inesperado, inténtelo nuevamente."
+          );
+          console.log("error", err);
+        }
       }
+    },
+    refresh() {
+      // this.$fetch();
     },
   },
   filters: {
     formatDate(date) {
       if (date?.length === 0) return "Sin información";
       return new Date(date?.seconds * 1000).toLocaleDateString("us-SP");
+    },
+  },
+  computed: {
+    cleanInformaciones: function () {
+      return [
+        ...new Map(this.informaciones.map((item) => [item.id, item])).values(),
+      ];
     },
   },
 };

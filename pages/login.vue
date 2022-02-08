@@ -1,5 +1,8 @@
 <template>
   <v-card class="pa-8 ma-8 my-12">
+    <v-card-title>
+      <span class="headline mb-4"> Ingresar </span>
+    </v-card-title>
     <form>
       <v-text-field v-model.trim="email" label="E-mail" required></v-text-field>
       <v-text-field
