@@ -19,10 +19,92 @@
     <br />
     <br />
     <br />
-    <v-card-title>
-      <h2>{{ paciente.nombre }}</h2>
+    <v-card-title class="text-h5">
+      {{ paciente.nombre }}
     </v-card-title>
-    <v-card-text> informacion: {{ informacion }} </v-card-text>
+
+    <v-divider class="mb-4"></v-divider>
+
+    <v-row>
+      <v-col cols="12" md="6">
+        <v-list-item-title class="mb-1 ml-3">
+          <span class="font-weight-medium"> Edad:</span>
+          {{ getAge(paciente.fecha_de_nacimiento) }}
+        </v-list-item-title>
+      </v-col>
+      <v-col cols="12" md="6">
+        <v-list-item-title class="mb-1 ml-3">
+          <span class="font-weight-medium"> A que se dedica: </span>
+          {{ paciente.a_que_se_dedica }}
+        </v-list-item-title>
+      </v-col>
+      <v-col cols="12" md="6">
+        <v-list-item-title class="mb-1 ml-3">
+          <span class="font-weight-medium"> Pasatiempos: </span>
+          {{ paciente.pasatiempos }}
+        </v-list-item-title>
+      </v-col>
+      <v-col cols="12" md="6">
+        <v-list-item-title class="mb-1 ml-3">
+          <span class="font-weight-medium"> Antecedentes: </span>
+          {{ paciente.antecedentes }}
+        </v-list-item-title>
+      </v-col>
+      <v-col cols="12" md="6">
+        <v-list-item-title class="mb-1 ml-3">
+          <span class="font-weight-medium"> Procedencia: </span>
+          {{ paciente.procedencia }}
+        </v-list-item-title>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12">
+        <v-btn
+          color="primary"
+          elevation="2"
+          rounded
+          class="float-right mr-md-6"
+        >
+          <v-icon>mdi-plus</v-icon>
+          Agregar Informacion
+        </v-btn>
+      </v-col>
+    </v-row>
+
+    <v-row class="pa-0 ma-0 mt-2">
+      <v-col cols="12">
+        <v-divider></v-divider>
+      </v-col>
+    </v-row>
+
+    <v-data-table :headers="headers" :items="informacion">
+      <template v-slot:[`item.fecha`]="{ item }">
+        {{ item.fecha | formatDate }}
+      </template>
+      <template v-slot:[`item.options`]="{ item }">
+        <v-btn
+          small
+          class="ml-3 white--text"
+          color="red darken-4"
+          elevation="2"
+          outlined
+          rounded
+        >
+          Eliminar
+        </v-btn>
+        <v-btn
+          small
+          class="ml-3 white--text"
+          color="blue darken-4"
+          elevation="2"
+          outlined
+          rounded
+        >
+          Editar
+        </v-btn>
+      </template>
+    </v-data-table>
+
     <v-dialog persistent v-model="editModal" max-width="90vw">
       <edit-paciente
         @cancel="editModal = false"
@@ -48,6 +130,11 @@ export default {
     return {
       randomKey: 0,
       editModal: false,
+      headers: [
+        { text: "Fecha", value: "fecha" },
+        { text: "Información", value: "informacion_clinica" },
+        { value: "options", sortable: false },
+      ],
     };
   },
   async asyncData({ params }) {
@@ -76,6 +163,26 @@ export default {
     handleSuccess(data) {
       this.editModal = false;
       this.$store.commit("SET_SNACKBAR", data);
+    },
+    getAge(dob) {
+      if (dob) {
+        let dobFormat = dob?.replace(/-/g, ",");
+        const today = new Date();
+        const birthDate = new Date(dobFormat);
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
+        return age;
+      } else {
+        return "sin información";
+      }
+    },
+  },
+  filters: {
+    formatDate(date) {
+      console.log("date", date);
+      if (date.length === 0) return "Sin información";
+      return new Date(date.seconds * 1000).toLocaleDateString("us-SP");
     },
   },
 };
