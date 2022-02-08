@@ -89,6 +89,7 @@
           elevation="2"
           outlined
           rounded
+          @click="deleteInfo(item)"
         >
           Eliminar
         </v-btn>
@@ -118,7 +119,13 @@
 
 <script>
 import { db } from "~/plugins/firebase.js";
-import { doc, getDoc, getDocs, collection } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  getDocs,
+  collection,
+  deleteDoc,
+} from "firebase/firestore";
 import auth from "@/mixins/authMixin";
 
 export default {
@@ -128,6 +135,7 @@ export default {
   },
   data() {
     return {
+      informacion: [],
       randomKey: 0,
       editModal: false,
       headers: [
@@ -177,12 +185,26 @@ export default {
         return "sin información";
       }
     },
+    async deleteInfo(item) {
+      if (confirm(`¿Estás seguro de eliminar?`)) {
+        await deleteDoc(
+          doc(
+            db,
+            "pacientes",
+            `${this.paciente.id}/informacion_clinica`,
+            item.id
+          )
+        ).then(async () => {
+          this.$store.commit("SET_SNACKBAR", "Información eliminada");
+          await this.$nuxt.refresh();
+        });
+      }
+    },
   },
   filters: {
     formatDate(date) {
-      console.log("date", date);
-      if (date.length === 0) return "Sin información";
-      return new Date(date.seconds * 1000).toLocaleDateString("us-SP");
+      if (date?.length === 0) return "Sin información";
+      return new Date(date?.seconds * 1000).toLocaleDateString("us-SP");
     },
   },
 };
