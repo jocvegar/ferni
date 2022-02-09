@@ -106,7 +106,13 @@
           </v-col>
           <v-col cols="6" offset="3">
             <v-row align="center" justify="end">
-              <v-btn @click="submit()" class="mt-4" color="primary" block>
+              <v-btn
+                @click="submit()"
+                class="mt-4"
+                color="primary"
+                block
+                :loading="submitting"
+              >
                 Guardar
               </v-btn>
             </v-row>
@@ -137,6 +143,7 @@ export default {
   data() {
     return {
       dateMenu: false,
+      submitting: false,
       paciente: {
         nombre: "",
         fecha_de_nacimiento: "",
@@ -153,6 +160,7 @@ export default {
       this.$v.$touch();
       if (this.$v.paciente.$invalid) return;
       try {
+        this.submitting = true;
         await addDoc(collection(db, "pacientes"), this.paciente).then((doc) => {
           if (this.informacion_clinica.length > 0) {
             addDoc(collection(db, `pacientes/${doc.id}/informacion_clinica`), {
@@ -162,12 +170,14 @@ export default {
             });
           }
           if (this.$nuxt.isOffline) {
+            this.submitting = false;
             this.$router.push("/");
             this.$store.commit(
               "SET_SNACKBAR",
               "Estas sin conexión, los datos y el diagnóstico se aparecerán cuando vuelvas a conectarte"
             );
           } else {
+            this.submitting = false;
             this.$router.push(`/paciente/${doc.id}`);
           }
         });

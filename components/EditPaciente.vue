@@ -110,7 +110,13 @@
           </v-col>
           <v-col cols="6" class="px-6">
             <v-row justify="center">
-              <v-btn @click="update()" class="mt-4" color="primary" block>
+              <v-btn
+                @click="update()"
+                class="mt-4"
+                color="primary"
+                block
+                :loading="submitting"
+              >
                 Editar
               </v-btn>
             </v-row>
@@ -143,6 +149,7 @@ export default {
   },
   data() {
     return {
+      submitting: false,
       dateMenu: false,
     };
   },
@@ -155,6 +162,8 @@ export default {
     async update() {
       this.$v.$touch();
       if (this.$v.paciente.$invalid) return;
+      this.submitting = true;
+
       const ref = doc(db, "pacientes", this.paciente.id);
 
       try {
@@ -166,6 +175,7 @@ export default {
             );
           }
           this.$emit("success", "Actualizado");
+          this.submitting = false;
         });
       } catch (err) {
         this.$store.commit(
@@ -173,6 +183,7 @@ export default {
           "Ocurrió un error inesperado, inténtelo nuevamente."
         );
         console.log("error", err);
+        this.submitting = false;
       }
     },
   },

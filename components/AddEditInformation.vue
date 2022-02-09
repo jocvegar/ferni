@@ -39,6 +39,8 @@
                 class="mt-4"
                 color="primary"
                 block
+                :loading="submitting"
+                :disabled="!informacion.informacion_clinica"
               >
                 Guardar
               </v-btn>
@@ -48,6 +50,8 @@
                 class="mt-4"
                 color="primary"
                 block
+                :loading="submitting"
+                :disabled="!informacion.informacion_clinica"
               >
                 Actualizar
               </v-btn>
@@ -71,6 +75,7 @@ import {
 export default {
   data() {
     return {
+      submitting: false,
       informacion: {
         informacion_clinica: "",
       },
@@ -100,6 +105,7 @@ export default {
   },
   methods: {
     async submit() {
+      this.submitting = true;
       try {
         await addDoc(
           collection(db, "pacientes", this.parentId, "informacion_clinica"),
@@ -110,6 +116,7 @@ export default {
           }
         ).then(() => {
           this.$emit("success", "Creado");
+          this.submitting = false;
         });
       } catch {
         this.$store.commit(
@@ -117,9 +124,11 @@ export default {
           "Ocurrió un error inesperado, inténtelo nuevamente."
         );
         console.log("error", err);
+        this.submitting = false;
       }
     },
     async update() {
+      this.submitting = true;
       const informacionRed = doc(
         db,
         "pacientes",
@@ -133,6 +142,7 @@ export default {
       }).then(() => {
         this.$emit("success", "Actualizado");
         this.$emit("refresh");
+        this.submitting = false;
       });
     },
   },
