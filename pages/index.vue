@@ -10,7 +10,7 @@
     <br />
     <br />
     <v-card-title>
-      <span class="headline mb-4"> Pacientes </span>
+      <span class="title mb-4"> Pacientes </span>
     </v-card-title>
     <br />
     <v-card-title>

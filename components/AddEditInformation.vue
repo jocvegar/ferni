@@ -1,27 +1,42 @@
 <template>
   <v-card elevation="0">
     <v-card-title>
-      <span class="headline mb-4">
-        {{ type == "new" ? "Nueva" : "Editar" }} Información Clínica
-      </span>
-      <v-btn
-        style="right: 15px; top: 10px"
-        icon
-        color="primary"
-        fab
-        absolute
-        @click="$emit('cancel')"
-      >
-        <v-icon dark>mdi-close</v-icon>
-      </v-btn>
+      <v-row>
+        <v-col cols="10">
+          <span class="title mb-4">
+            {{ type == "new" ? "Nueva" : "Editar" }} Información Clínica
+          </span>
+        </v-col>
+
+        <v-col cols="2">
+          <v-btn
+            style="right: 15px; top: 10px"
+            icon
+            color="primary"
+            fab
+            absolute
+            @click="$emit('cancel')"
+          >
+            <v-icon dark>mdi-close</v-icon>
+          </v-btn>
+        </v-col>
+      </v-row>
     </v-card-title>
     <v-card-text>
-      <v-container>
+      <v-container fluid>
         <v-row>
           <v-col cols="12">
             <v-text-field
               label="Información clinica"
               v-model.trim="informacion.informacion_clinica"
+              outlined
+              class="py-0"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12">
+            <v-text-field
+              label="Dianóstico"
+              v-model.trim="informacion.diagnostico"
               outlined
               class="py-0"
             ></v-text-field>
@@ -78,6 +93,7 @@ export default {
       submitting: false,
       informacion: {
         informacion_clinica: "",
+        diagnostico: "",
       },
     };
   },
@@ -112,6 +128,7 @@ export default {
           {
             userId: this.parentId,
             informacion_clinica: this.informacion.informacion_clinica,
+            diagnostico: this.informacion.diagnostico,
             fecha: serverTimestamp(),
           }
         ).then(() => {
@@ -139,6 +156,7 @@ export default {
 
       await updateDoc(informacionRed, {
         informacion_clinica: this.informacion.informacion_clinica,
+        diagnostico: this.informacion.diagnostico,
       }).then(() => {
         this.$emit("success", "Actualizado");
         this.$emit("refresh");

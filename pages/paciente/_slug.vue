@@ -20,7 +20,7 @@
     <br />
     <br />
     <v-card-title>
-      <span class="headline mb-4">
+      <span class="title mb-4">
         {{ paciente.nombre }}
       </span>
     </v-card-title>
@@ -115,7 +115,7 @@
       </template>
     </v-data-table>
 
-    <v-dialog persistent v-model="editModal" max-width="90vw">
+    <v-dialog persistent v-model="editModal">
       <edit-paciente
         @cancel="editModal = false"
         @success="handleSuccess"
@@ -124,7 +124,7 @@
       ></edit-paciente>
     </v-dialog>
 
-    <v-dialog persistent v-model="addEditModal" max-width="70vw">
+    <v-dialog persistent v-model="addEditModal">
       <add-edit-information
         @cancel="addEditModal = false"
         @success="handleSuccess"
@@ -167,6 +167,8 @@ export default {
       headers: [
         { text: "Fecha", value: "fecha" },
         { text: "Información", value: "informacion_clinica" },
+        { text: "Diagnóstico", value: "diagnostico" },
+
         { value: "options", sortable: false },
       ],
     };
