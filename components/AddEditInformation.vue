@@ -35,7 +35,7 @@
           </v-col>
           <v-col cols="12">
             <v-text-field
-              label="Dianóstico"
+              label="Diagnóstico"
               v-model.trim="informacion.diagnostico"
               outlined
               class="py-0"
@@ -159,7 +159,6 @@ export default {
         diagnostico: this.informacion.diagnostico,
       }).then(() => {
         this.$emit("success", "Actualizado");
-        this.$emit("refresh");
         this.submitting = false;
       });
     },

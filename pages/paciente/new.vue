@@ -99,6 +99,14 @@
               class="py-0"
             ></v-text-field>
           </v-col>
+          <v-col cols="12">
+            <v-text-field
+              label="Diagnóstico"
+              v-model.trim="diagnostico"
+              outlined
+              class="py-0"
+            ></v-text-field>
+          </v-col>
         </v-row>
         <v-row class="pa-0 ma-0 mt-2">
           <v-col cols="12">
@@ -153,6 +161,7 @@ export default {
         procedencia: "",
       },
       informacion_clinica: "",
+      diagnostico: "",
     };
   },
   methods: {
@@ -166,6 +175,7 @@ export default {
             addDoc(collection(db, `pacientes/${doc.id}/informacion_clinica`), {
               userId: doc.id,
               informacion_clinica: this.informacion_clinica,
+              diagnostico: this.diagnostico,
               fecha: serverTimestamp(),
             });
           }

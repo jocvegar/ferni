@@ -128,7 +128,6 @@
       <add-edit-information
         @cancel="addEditModal = false"
         @success="handleSuccess"
-        @refresh="refresh()"
         :key="randomKey"
         :paciente="paciente"
         :item="item"
@@ -169,7 +168,7 @@ export default {
         { text: "Información", value: "informacion_clinica" },
         { text: "Diagnóstico", value: "diagnostico" },
 
-        { value: "options", sortable: false },
+        { value: "options", sortable: false, width: "300" },
       ],
     };
   },
@@ -263,9 +262,6 @@ export default {
           console.log("error", err);
         }
       }
-    },
-    refresh() {
-      // this.$fetch();
     },
   },
   filters: {
