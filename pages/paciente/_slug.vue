@@ -271,7 +271,7 @@ export default {
   filters: {
     formatDate(date) {
       if (date?.length === 0) return "Sin información";
-      return new Date(date?.seconds * 1000).toLocaleDateString("us-SP");
+      return new Date(date?.seconds * 1000).toLocaleDateString("en-GB");
     },
   },
   computed: {
