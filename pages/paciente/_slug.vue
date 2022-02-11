@@ -167,7 +167,6 @@ export default {
         { text: "Fecha", value: "fecha" },
         { text: "Información", value: "informacion_clinica" },
         { text: "Diagnóstico", value: "diagnostico" },
-
         { value: "options", sortable: false, width: "300" },
       ],
     };
