@@ -18,7 +18,11 @@ export default {
   css: [],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: ["~/plugins/firebase.js", "~/plugins/auth.js"],
+  plugins: [
+    "~/plugins/firebase.js",
+    "~/plugins/auth.js",
+    { src: "~/plugins/vue-image-upload.js", mode: "client" },
+  ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
