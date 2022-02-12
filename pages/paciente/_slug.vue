@@ -133,6 +133,7 @@
         :item="item"
         :type="type"
         :parentId="paciente.id"
+        :parentName="paciente.nombre"
       ></add-edit-information>
     </v-dialog>
   </v-card>

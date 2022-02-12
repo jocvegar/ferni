@@ -41,7 +41,42 @@
               class="py-0"
             ></v-text-field>
           </v-col>
+          <v-col cols="6">
+            <image-uploader
+              v-model="images"
+              accept="image/*"
+              label="Imágenes"
+              small-chips
+              multiple
+              @change="setImages"
+              :disabled="submitting"
+            >
+              <template v-slot:append-outer>
+                <v-progress-circular
+                  v-if="submitting"
+                  color="grey"
+                  indeterminate
+                  small
+                />
+              </template>
+            </image-uploader>
+          </v-col>
         </v-row>
+        <!-- <v-row>
+          <v-col
+            cols="12"
+            align="center"
+            v-for="(image, idx) in informacion.images"
+            :key="idx"
+          >
+            <v-img
+              :src="image.imgSrc"
+              contain
+              v-if="image.imgSrc"
+              max-height="500"
+            ></v-img>
+          </v-col>
+        </v-row> -->
         <v-row class="pa-0 ma-0 mt-2">
           <v-col cols="12">
             <v-divider></v-divider>
@@ -78,7 +113,9 @@
   </v-card>
 </template>
 <script>
-import { db } from "~/plugins/firebase.js";
+import { db, storage } from "~/plugins/firebase.js";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
 import {
   collection,
   addDoc,
@@ -94,7 +131,9 @@ export default {
       informacion: {
         informacion_clinica: "",
         diagnostico: "",
+        images: [],
       },
+      images: [],
     };
   },
   props: {
@@ -110,6 +149,11 @@ export default {
       type: Object,
       required: false,
     },
+    parentName: {
+      type: String,
+      required: true,
+      default: "SinNombre",
+    },
   },
   mounted() {
     let scrollPosition = document.getElementsByClassName("v-dialog")[0];
@@ -122,6 +166,7 @@ export default {
   methods: {
     async submit() {
       this.submitting = true;
+      await this.uploadIFiles(this.images);
       try {
         await addDoc(
           collection(db, "pacientes", this.parentId, "informacion_clinica"),
@@ -130,6 +175,7 @@ export default {
             informacion_clinica: this.informacion.informacion_clinica,
             diagnostico: this.informacion.diagnostico,
             fecha: serverTimestamp(),
+            images: this.informacion.images,
           }
         ).then(() => {
           this.$emit("success", "Creado");
@@ -161,6 +207,37 @@ export default {
         this.$emit("success", "Actualizado");
         this.submitting = false;
       });
+    },
+    setImages(files) {
+      this.images = files;
+    },
+    async uploadIFiles(files) {
+      for (const file of files) {
+        try {
+          if (file && file.name) {
+            const filePath = `info-clinica/${this.parentName.replace(
+              /\s/g,
+              ""
+            )}/${Date.now()}-${file.name.replace(/\s/g, "")}`;
+            const metadata = { contentType: file.type };
+            const storageRef = ref(storage, filePath);
+            await uploadBytes(storageRef, file, metadata).then(async () => {
+              await getDownloadURL(ref(storage, filePath))
+                .then((url) => {
+                  this.informacion.images.push({
+                    imgSrc: url,
+                    filename: file.name,
+                  });
+                })
+                .catch((error) => {
+                  console.error("error", error);
+                });
+            });
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
     },
   },
 };

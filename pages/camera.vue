@@ -23,6 +23,8 @@
           :debug="1"
           outputFormat="verbose"
           @input="setImage"
+          quality="0.8"
+          scaleRatio="0.9"
         >
           <label for="fileInput" slot="upload-label">
             <figure>
