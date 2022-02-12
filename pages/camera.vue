@@ -2,12 +2,24 @@
   <client-only>
     <div class="hello">
       <h1>{{ msg }}</h1>
+      capture: {{ capture }}
+      <v-divider></v-divider>
+      <v-btn @click="capture = 'camera'" elevation="2" plain rounded>
+        camera
+      </v-btn>
+      <v-btn @click="capture = 'user'" elevation="2" plain rounded> user</v-btn>
+      <v-btn @click="capture = 'environment'" elevation="2" plain rounded>
+        environment
+      </v-btn>
+      <v-btn @click="capture = 'false'" elevation="2" plain rounded>
+        false
+      </v-btn>
 
       <div class="my-8">
         <image-uploader
           :preview="true"
           :className="['fileinput', { 'fileinput--loaded': hasImage }]"
-          capture="user"
+          :capture="capture"
           :debug="1"
           outputFormat="verbose"
           @input="setImage"
@@ -44,6 +56,7 @@ export default {
       msg: "Vue Image Upload and Resize Demo",
       hasImage: false,
       image: null,
+      capture: "user",
     };
   },
   methods: {
