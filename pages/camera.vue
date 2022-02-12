@@ -7,9 +7,8 @@
         <image-uploader
           :preview="true"
           :className="['fileinput', { 'fileinput--loaded': hasImage }]"
-          capture="camera"
+          capture="user"
           :debug="1"
-          :autoRotate="true"
           outputFormat="verbose"
           @input="setImage"
         >
