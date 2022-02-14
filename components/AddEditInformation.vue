@@ -42,7 +42,7 @@
             ></v-text-field>
           </v-col>
           <v-col cols="6">
-            <image-uploader
+            <v-file-input
               v-model="images"
               accept="image/*"
               label="Imágenes"
@@ -59,7 +59,7 @@
                   small
                 />
               </template>
-            </image-uploader>
+            </v-file-input>
           </v-col>
         </v-row>
         <!-- <v-row>
@@ -192,6 +192,7 @@ export default {
     },
     async update() {
       this.submitting = true;
+      await this.uploadIFiles(this.images);
       const informacionRed = doc(
         db,
         "pacientes",
@@ -203,6 +204,7 @@ export default {
       await updateDoc(informacionRed, {
         informacion_clinica: this.informacion.informacion_clinica,
         diagnostico: this.informacion.diagnostico,
+        images: this.informacion.images,
       }).then(() => {
         this.$emit("success", "Actualizado");
         this.submitting = false;
