@@ -62,21 +62,6 @@
             </v-file-input>
           </v-col>
         </v-row>
-        <!-- <v-row>
-          <v-col
-            cols="12"
-            align="center"
-            v-for="(image, idx) in informacion.images"
-            :key="idx"
-          >
-            <v-img
-              :src="image.imgSrc"
-              contain
-              v-if="image.imgSrc"
-              max-height="500"
-            ></v-img>
-          </v-col>
-        </v-row> -->
         <v-row class="pa-0 ma-0 mt-2">
           <v-col cols="12">
             <v-divider></v-divider>
@@ -226,6 +211,7 @@ export default {
             await uploadBytes(storageRef, file, metadata).then(async () => {
               await getDownloadURL(ref(storage, filePath))
                 .then((url) => {
+                  if (!this.informacion.images) this.informacion.images = [];
                   this.informacion.images.push({
                     imgSrc: url,
                     filename: file.name,

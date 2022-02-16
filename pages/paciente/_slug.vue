@@ -89,6 +89,21 @@
       <template v-slot:[`item.fecha`]="{ item }">
         {{ item.fecha | formatDate }}
       </template>
+      <template v-slot:[`item.pictures`]="{ item }">
+        <v-btn
+          small
+          class="white--text"
+          color="blue-grey darken-1"
+          elevation="2"
+          outlined
+          rounded
+          v-if="item.images"
+          @click="showImages(item.images)"
+        >
+          Ver Imágenes
+        </v-btn>
+      </template>
+
       <template v-slot:[`item.options`]="{ item }">
         <v-btn
           small
@@ -136,6 +151,14 @@
         :parentName="paciente.nombre"
       ></add-edit-information>
     </v-dialog>
+
+    <v-dialog persistent v-model="imagesModal">
+      <images-modal
+        @cancel="imagesModal = false"
+        :key="randomKey"
+        :images="images"
+      ></images-modal>
+    </v-dialog>
   </v-card>
 </template>
 
@@ -164,10 +187,13 @@ export default {
       type: "",
       addEditModal: false,
       informaciones: [],
+      images: [],
+      imagesModal: false,
       headers: [
         { text: "Fecha", value: "fecha" },
         { text: "Información", value: "informacion_clinica" },
         { text: "Diagnóstico", value: "diagnostico" },
+        { text: "Imágenes", value: "pictures" },
         { value: "options", sortable: false, width: "300" },
       ],
     };
@@ -223,6 +249,11 @@ export default {
       this.editModal = false;
       this.addEditModal = false;
       this.$store.commit("SET_SNACKBAR", data);
+    },
+    showImages(data) {
+      this.images = data;
+      this.randomKey = Math.random();
+      this.imagesModal = true;
     },
     getAge(dob) {
       if (dob) {
