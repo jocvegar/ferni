@@ -214,7 +214,7 @@ export default {
                   if (!this.informacion.images) this.informacion.images = [];
                   this.informacion.images.push({
                     imgSrc: url,
-                    filename: file.name,
+                    filename: filePath,
                   });
                 })
                 .catch((error) => {

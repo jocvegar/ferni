@@ -97,7 +97,7 @@
           elevation="2"
           outlined
           rounded
-          v-if="item.images"
+          v-if="item.images && item.images.length > 0"
           @click="showImages(item.images)"
         >
           Ver Imágenes
@@ -112,7 +112,7 @@
           elevation="2"
           outlined
           rounded
-          @click="deleteInfo(item.id)"
+          @click="deleteInfo(item)"
         >
           Eliminar
         </v-btn>
@@ -163,7 +163,7 @@
 </template>
 
 <script>
-import { db } from "~/plugins/firebase.js";
+import { db, storage } from "~/plugins/firebase.js";
 import {
   doc,
   getDoc,
@@ -171,6 +171,7 @@ import {
   deleteDoc,
   onSnapshot,
 } from "firebase/firestore";
+import { ref, deleteObject } from "firebase/storage";
 import auth from "@/mixins/authMixin";
 
 export default {
@@ -268,29 +269,43 @@ export default {
         return "sin información";
       }
     },
-    async deleteInfo(itemId) {
+    async deleteInfo(item) {
       if (confirm(`¿Estás seguro de eliminar?`)) {
         try {
+          if (item.images && item.images.length > 0) {
+            await this.deleteImages(item.images);
+          }
+
           await deleteDoc(
             doc(
               db,
               "pacientes",
               `${this.paciente.id}/informacion_clinica`,
-              itemId
+              item.id
             )
           ).then(async () => {
             this.$store.commit("SET_SNACKBAR", "Información eliminada");
 
             this.informaciones = this.informaciones.filter(function (el) {
-              return el.id != itemId;
+              return el.id != item.id;
             });
           });
-        } catch {
+        } catch (err) {
           this.$store.commit(
             "SET_SNACKBAR",
             "Ocurrió un error inesperado, inténtelo nuevamente."
           );
           console.log("error", err);
+        }
+      }
+    },
+    async deleteImages(images) {
+      for (const image of images) {
+        const imageRef = ref(storage, image.filename);
+        try {
+          await deleteObject(imageRef);
+        } catch (e) {
+          console.error(e);
         }
       }
     },
