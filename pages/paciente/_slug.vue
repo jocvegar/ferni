@@ -98,7 +98,7 @@
           outlined
           rounded
           v-if="item.images && item.images.length > 0"
-          @click="showImages(item.images)"
+          @click="showImages(item)"
         >
           Ver Imágenes
         </v-btn>
@@ -155,9 +155,19 @@
     <v-dialog persistent v-model="imagesModal">
       <images-modal
         @cancel="imagesModal = false"
+        @edit="editImages"
         :key="randomKey"
         :images="images"
       ></images-modal>
+    </v-dialog>
+
+    <v-dialog persistent v-model="editImagesModal">
+      <edit-images-modal
+        @cancel="editImagesModal = false"
+        :key="randomKey"
+        :images="images"
+        :item="activeItem"
+      ></edit-images-modal>
     </v-dialog>
   </v-card>
 </template>
@@ -185,11 +195,13 @@ export default {
       randomKey: 0,
       editModal: false,
       item: null,
+      activeItem: null,
       type: "",
       addEditModal: false,
       informaciones: [],
       images: [],
       imagesModal: false,
+      editImagesModal: false,
       headers: [
         { text: "Fecha", value: "fecha" },
         { text: "Información", value: "informacion_clinica" },
@@ -251,10 +263,16 @@ export default {
       this.addEditModal = false;
       this.$store.commit("SET_SNACKBAR", data);
     },
-    showImages(data) {
-      this.images = data;
+    showImages(item) {
+      this.images = item.images;
+      this.activeItem = item;
       this.randomKey = Math.random();
       this.imagesModal = true;
+    },
+    editImages() {
+      this.editImagesModal = true;
+      this.imagesModal = false;
+      this.randomKey = Math.random();
     },
     getAge(dob) {
       if (dob) {
