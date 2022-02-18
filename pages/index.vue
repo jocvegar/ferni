@@ -22,7 +22,12 @@
         hide-details
       ></v-text-field>
     </v-card-title>
-    <v-data-table :headers="headers" :items="pacientes" :search="search">
+    <v-data-table
+      :headers="headers"
+      :items="pacientes"
+      :search="search"
+      :sort-by="['nombre']"
+    >
       <template v-slot:[`item.nombre`]="{ item }">
         <NuxtLink
           :to="`/paciente/${item.id}`"
