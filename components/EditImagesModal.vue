@@ -42,6 +42,7 @@
                 elevation="5"
                 class="mb-2"
                 @click="deleteImage(image)"
+                :loading="processing"
               >
                 Borrar
               </v-btn>
@@ -84,6 +85,7 @@ export default {
   data() {
     return {
       localImages: [],
+      processing: false,
     };
   },
   mounted() {
@@ -91,6 +93,7 @@ export default {
   },
   methods: {
     async deleteImage(image) {
+      this.processing = true;
       const informacionRef = doc(
         db,
         "pacientes",
@@ -106,6 +109,7 @@ export default {
           return image.filename !== img.filename;
         });
         if (this.localImages.length == 0) this.$emit("cancel");
+        this.processing = false;
       });
     },
     async removeImage(image) {
