@@ -41,7 +41,7 @@
               class="py-0"
             ></v-text-field>
           </v-col>
-          <v-col cols="6">
+          <v-col cols="12">
             <v-file-input
               v-model="images"
               accept="image/*"

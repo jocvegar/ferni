@@ -17,11 +17,9 @@
         <v-carousel hide-delimiters>
           <v-carousel-item eager v-for="(item, i) in images" :key="i">
             <v-img
-              width="800"
-              class="mx-auto my-auto"
+              class="mx-auto my-auto fill-height"
               :src="item.imgSrc"
               contain
-              :aspect-ratio="16 / 9"
             >
               <template v-slot:placeholder>
                 <v-row class="fill-height ma-0" align="center" justify="center">
