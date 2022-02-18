@@ -27,6 +27,9 @@
       :items="pacientes"
       :search="search"
       :sort-by="['nombre']"
+      :footer-props="{
+        itemsPerPageOptions: [10, 50, 100],
+      }"
     >
       <template v-slot:[`item.nombre`]="{ item }">
         <NuxtLink
