@@ -97,7 +97,11 @@
       </v-list>
     </v-navigation-drawer>
     <v-footer absolute app>
-      <span>&copy; {{ new Date().getFullYear() }}</span>
+      <v-row justify="center" no-gutters>
+        <v-col class="text-center mt-0" cols="12">
+          <span>&copy; {{ new Date().getFullYear() }}</span>
+        </v-col>
+      </v-row>
     </v-footer>
   </v-app>
 </template>
@@ -120,7 +124,7 @@ export default {
       miniVariant: true,
       rightDrawer: false,
       leftDrawer: false,
-      title: "Dr. Alvarenga",
+      title: "Dr. Ortopeda",
     };
   },
   methods: {
