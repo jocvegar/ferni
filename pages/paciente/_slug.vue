@@ -1,134 +1,127 @@
 <template>
-  <v-card elevation="0">
-    <v-card-actions class="float-right">
-      <v-btn color="primary" elevation="2" raised to="/" nuxt outlined>
-        <v-icon>mdi-chevron-left</v-icon>
-        Atras
-      </v-btn>
-      <v-btn
-        color="primary"
-        elevation="2"
-        raised
-        @click="edit()"
-        v-if="paciente"
-      >
-        <v-icon>mdi-pencil-outline </v-icon>
-        Editar
-      </v-btn>
-    </v-card-actions>
-    <br />
-    <br />
-    <br />
-    <v-card-title>
-      <span class="title mb-4">
-        {{ paciente.nombre }}
-      </span>
-    </v-card-title>
-    <v-divider class="mb-4"></v-divider>
-    <v-row>
-      <v-col cols="12" md="6">
-        <v-list-item-title class="mb-1 ml-3">
-          <span class="font-weight-medium"> Edad:</span>
-          {{ getAge(paciente.fecha_de_nacimiento) }}
-        </v-list-item-title>
-      </v-col>
-      <v-col cols="12" md="6">
-        <v-list-item-title class="mb-1 ml-3">
-          <span class="font-weight-medium"> A que se dedica: </span>
-          {{ paciente.a_que_se_dedica }}
-        </v-list-item-title>
-      </v-col>
-      <v-col cols="12" md="6">
-        <v-list-item-title class="mb-1 ml-3">
-          <span class="font-weight-medium"> Pasatiempos: </span>
-          {{ paciente.pasatiempos }}
-        </v-list-item-title>
-      </v-col>
-      <v-col cols="12" md="6">
-        <v-list-item-title class="mb-1 ml-3">
-          <span class="font-weight-medium"> Antecedentes: </span>
-          {{ paciente.antecedentes }}
-        </v-list-item-title>
-      </v-col>
-      <v-col cols="12" md="6">
-        <v-list-item-title class="mb-1 ml-3">
-          <span class="font-weight-medium"> Procedencia: </span>
-          {{ paciente.procedencia }}
-        </v-list-item-title>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="12">
+  <div>
+    <v-row class="my-2">
+      <v-col cols="12" align="right">
+        <v-btn color="primary" elevation="2" raised to="/" nuxt outlined>
+          <v-icon>mdi-chevron-left</v-icon>
+          Atras
+        </v-btn>
         <v-btn
           color="primary"
           elevation="2"
-          rounded
-          class="float-right mr-md-6"
-          @click="addEditInfo('new', null)"
+          raised
+          @click="edit()"
+          v-if="paciente"
         >
+          <v-icon>mdi-pencil-outline </v-icon>
+          Editar
+        </v-btn>
+      </v-col>
+    </v-row>
+    <v-card elevation="2">
+      <v-card-title>
+        <span class="title">
+          {{ paciente.nombre }}
+        </span>
+      </v-card-title>
+      <v-divider class="mb-4"></v-divider>
+      <v-row>
+        <v-col cols="12" md="6">
+          <v-list-item-title class="mb-1 ml-3">
+            <span class="font-weight-medium"> Edad:</span>
+            {{ getAge(paciente.fecha_de_nacimiento) }}
+          </v-list-item-title>
+        </v-col>
+        <v-col cols="12" md="6">
+          <v-list-item-title class="mb-1 ml-3">
+            <span class="font-weight-medium"> A que se dedica: </span>
+            {{ paciente.a_que_se_dedica }}
+          </v-list-item-title>
+        </v-col>
+        <v-col cols="12" md="6">
+          <v-list-item-title class="mb-1 ml-3">
+            <span class="font-weight-medium"> Pasatiempos: </span>
+            {{ paciente.pasatiempos }}
+          </v-list-item-title>
+        </v-col>
+        <v-col cols="12" md="6">
+          <v-list-item-title class="mb-1 ml-3">
+            <span class="font-weight-medium"> Antecedentes: </span>
+            {{ paciente.antecedentes }}
+          </v-list-item-title>
+        </v-col>
+        <v-col cols="12" md="6">
+          <v-list-item-title class="mb-1 ml-3">
+            <span class="font-weight-medium"> Procedencia: </span>
+            {{ paciente.procedencia }}
+          </v-list-item-title>
+        </v-col>
+      </v-row>
+    </v-card>
+
+    <v-row class="my-4">
+      <v-col cols="12" align="right">
+        <v-btn color="primary" elevation="2" @click="addEditInfo('new', null)">
           <v-icon>mdi-plus</v-icon>
           Agregar Informacion
         </v-btn>
       </v-col>
     </v-row>
 
-    <v-row class="pa-0 ma-0 mt-2">
-      <v-col cols="12">
-        <v-divider></v-divider>
-      </v-col>
-    </v-row>
+    <v-card elevation="2">
+      <v-card-title>
+        <span class="title"> Consultas </span>
+      </v-card-title>
+      <v-data-table
+        :headers="headers"
+        :items="cleanInformaciones"
+        :loading="$fetchState.pending"
+        item-key="id"
+        :sort-by="['formatDate']"
+        :sort-asc="true"
+      >
+        <template v-slot:[`item.fecha`]="{ item }">
+          {{ item.fecha | formatDate }}
+        </template>
+        <template v-slot:[`item.pictures`]="{ item }">
+          <v-btn
+            small
+            class="white--text"
+            color="blue-grey darken-1"
+            elevation="2"
+            outlined
+            rounded
+            v-if="item.images && item.images.length > 0"
+            @click="showImages(item)"
+          >
+            Ver Imágenes
+          </v-btn>
+        </template>
 
-    <v-data-table
-      :headers="headers"
-      :items="cleanInformaciones"
-      :loading="$fetchState.pending"
-      item-key="id"
-      :sort-by="['formatDate']"
-      :sort-desc="true"
-    >
-      <template v-slot:[`item.fecha`]="{ item }">
-        {{ item.fecha | formatDate }}
-      </template>
-      <template v-slot:[`item.pictures`]="{ item }">
-        <v-btn
-          small
-          class="white--text"
-          color="blue-grey darken-1"
-          elevation="2"
-          outlined
-          rounded
-          v-if="item.images && item.images.length > 0"
-          @click="showImages(item)"
-        >
-          Ver Imágenes
-        </v-btn>
-      </template>
-
-      <template v-slot:[`item.options`]="{ item }">
-        <v-btn
-          small
-          class="ml-3 white--text"
-          color="red darken-4"
-          elevation="2"
-          outlined
-          rounded
-          @click="deleteInfo(item)"
-        >
-          Eliminar
-        </v-btn>
-        <v-btn
-          small
-          class="ml-3 white--text"
-          color="blue darken-4"
-          elevation="2"
-          outlined
-          rounded
-          @click="addEditInfo('edit', item)"
-        >
-          Editar
-        </v-btn>
-      </template>
-    </v-data-table>
+        <template v-slot:[`item.options`]="{ item }">
+          <v-btn
+            small
+            class="ml-3 white--text"
+            color="red darken-4"
+            elevation="2"
+            outlined
+            @click="deleteInfo(item)"
+          >
+            Eliminar
+          </v-btn>
+          <v-btn
+            small
+            class="ml-3 white--text"
+            color="blue darken-4"
+            elevation="2"
+            outlined
+            @click="addEditInfo('edit', item)"
+          >
+            Editar
+          </v-btn>
+        </template>
+      </v-data-table>
+    </v-card>
 
     <v-dialog persistent v-model="editModal">
       <edit-paciente
@@ -169,7 +162,7 @@
         :item="activeItem"
       ></edit-images-modal>
     </v-dialog>
-  </v-card>
+  </div>
 </template>
 
 <script>
@@ -180,6 +173,8 @@ import {
   collection,
   deleteDoc,
   onSnapshot,
+  query,
+  orderBy,
 } from "firebase/firestore";
 import { ref, deleteObject } from "firebase/storage";
 import auth from "@/mixins/authMixin";
@@ -206,8 +201,8 @@ export default {
         { text: "Fecha", value: "fecha" },
         { text: "Información", value: "informacion_clinica" },
         { text: "Diagnóstico", value: "diagnostico" },
-        { text: "Imágenes", value: "pictures" },
-        { value: "options", sortable: false, width: "300" },
+        { text: "Imágenes", value: "pictures", sortable: false },
+        { text: "Acciones", value: "options", sortable: false, width: "300" },
       ],
     };
   },
@@ -232,7 +227,7 @@ export default {
 
     return new Promise((resolve, reject) => {
       onSnapshot(
-        informationDocRef,
+        query(informationDocRef, orderBy("fecha", "desc")),
         { includeMetadataChanges: true },
         (snapshot) => {
           snapshot.docChanges().forEach((change) => {

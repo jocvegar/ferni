@@ -23,77 +23,75 @@
       </v-row>
     </v-card-title>
     <v-card-text>
-      <v-container fluid>
-        <v-row>
-          <v-col cols="12">
-            <v-text-field
-              label="Información clinica"
-              v-model.trim="informacion.informacion_clinica"
-              outlined
-              class="py-0"
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12">
-            <v-text-field
-              label="Diagnóstico"
-              v-model.trim="informacion.diagnostico"
-              outlined
-              class="py-0"
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12">
-            <v-file-input
-              v-model="images"
-              accept="image/*"
-              label="Imágenes"
-              small-chips
-              multiple
-              @change="setImages"
-              :disabled="submitting"
+      <v-row>
+        <v-col cols="12">
+          <v-text-field
+            label="Información clinica"
+            v-model.trim="informacion.informacion_clinica"
+            outlined
+            class="py-0"
+          ></v-text-field>
+        </v-col>
+        <v-col cols="12">
+          <v-text-field
+            label="Diagnóstico"
+            v-model.trim="informacion.diagnostico"
+            outlined
+            class="py-0"
+          ></v-text-field>
+        </v-col>
+        <v-col cols="12">
+          <v-file-input
+            v-model="images"
+            accept="image/*"
+            label="Imágenes"
+            small-chips
+            multiple
+            @change="setImages"
+            :disabled="submitting"
+          >
+            <template v-slot:append-outer>
+              <v-progress-circular
+                v-if="submitting"
+                color="grey"
+                indeterminate
+                small
+              />
+            </template>
+          </v-file-input>
+        </v-col>
+      </v-row>
+      <v-row class="pa-0 ma-0 mt-2">
+        <v-col cols="12">
+          <v-divider></v-divider>
+        </v-col>
+        <v-col cols="6" offset="3">
+          <v-row align="center" justify="end">
+            <v-btn
+              v-if="this.type == 'new'"
+              @click="submit()"
+              class="mt-4"
+              color="primary"
+              block
+              :loading="submitting"
+              :disabled="!informacion.informacion_clinica"
             >
-              <template v-slot:append-outer>
-                <v-progress-circular
-                  v-if="submitting"
-                  color="grey"
-                  indeterminate
-                  small
-                />
-              </template>
-            </v-file-input>
-          </v-col>
-        </v-row>
-        <v-row class="pa-0 ma-0 mt-2">
-          <v-col cols="12">
-            <v-divider></v-divider>
-          </v-col>
-          <v-col cols="6" offset="3">
-            <v-row align="center" justify="end">
-              <v-btn
-                v-if="this.type == 'new'"
-                @click="submit()"
-                class="mt-4"
-                color="primary"
-                block
-                :loading="submitting"
-                :disabled="!informacion.informacion_clinica"
-              >
-                Guardar
-              </v-btn>
-              <v-btn
-                v-else
-                @click="update()"
-                class="mt-4"
-                color="primary"
-                block
-                :loading="submitting"
-                :disabled="!informacion.informacion_clinica"
-              >
-                Actualizar
-              </v-btn>
-            </v-row>
-          </v-col>
-        </v-row>
-      </v-container>
+              Guardar
+            </v-btn>
+            <v-btn
+              v-else
+              @click="update()"
+              class="mt-4"
+              color="primary"
+              block
+              :loading="submitting"
+              :disabled="!informacion.informacion_clinica"
+            >
+              Actualizar
+            </v-btn>
+          </v-row>
+        </v-col>
+      </v-row>
     </v-card-text>
   </v-card>
 </template>

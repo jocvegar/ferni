@@ -1,19 +1,19 @@
 <template>
-  <v-card elevation="0">
-    <v-card-actions class="float-right">
-      <v-btn color="primary" elevation="2" raised to="/" nuxt outlined>
-        <v-icon>mdi-chevron-left</v-icon>
-        Atras
-      </v-btn>
-    </v-card-actions>
-    <br />
-    <br />
-    <br />
-    <v-card-title>
-      <span class="title mb-4"> Paciente Nuevo </span>
-    </v-card-title>
-    <v-card-text>
-      <v-container>
+  <div>
+    <v-row class="my-2">
+      <v-col cols="12" align="right">
+        <v-btn color="primary" elevation="2" raised to="/" nuxt>
+          <v-icon>mdi-chevron-left</v-icon>
+          Atras
+        </v-btn>
+      </v-col>
+    </v-row>
+
+    <v-card elevation="2">
+      <v-card-title>
+        <span class="title"> Paciente Nuevo </span>
+      </v-card-title>
+      <v-card-text>
         <v-row align="end">
           <v-col cols="12" md="6">
             <v-text-field
@@ -109,9 +109,6 @@
           </v-col>
         </v-row>
         <v-row class="pa-0 ma-0 mt-2">
-          <v-col cols="12">
-            <v-divider></v-divider>
-          </v-col>
           <v-col cols="6" offset="3">
             <v-row align="center" justify="end">
               <v-btn
@@ -126,9 +123,9 @@
             </v-row>
           </v-col>
         </v-row>
-      </v-container>
-    </v-card-text>
-  </v-card>
+      </v-card-text>
+    </v-card>
+  </div>
 </template>
 <script>
 import { db } from "~/plugins/firebase.js";

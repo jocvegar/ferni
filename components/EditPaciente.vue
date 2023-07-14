@@ -14,115 +14,113 @@
       </v-btn>
     </v-card-title>
     <v-card-text>
-      <v-container>
-        <v-row align="end">
-          <v-col cols="12" md="6">
-            <v-text-field
-              label="Nombre"
-              v-model.trim="paciente.nombre"
-              outlined
-              class="py-0"
-              :error-messages="nombreErrors"
-              @input="$v.paciente.nombre.$touch()"
-              @blur="$v.paciente.nombre.$touch()"
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12" md="6">
-            <v-menu
-              v-model="dateMenu"
-              :close-on-content-click="false"
-              :nudge-right="40"
-              transition="scale-transition"
-              offset-y
-              min-width="auto"
-              @blur="dateMenu = true"
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-text-field
-                  label="Fecha de Nacimiento"
-                  readonly
-                  v-bind="attrs"
-                  v-on="on"
-                  :value="computedDateFormatted"
-                  outlined
-                  class="py-0"
-                ></v-text-field>
-              </template>
-              <v-date-picker
-                v-model="paciente.fecha_de_nacimiento"
-                @input="dateMenu = false"
-                locale="es-us"
-                no-title
-                scrollable
-                :max="new Date().toISOString().slice(0, 10)"
-              ></v-date-picker>
-            </v-menu>
-          </v-col>
-          <v-col cols="12" md="6">
-            <v-text-field
-              label="Antecedentes"
-              v-model.trim="paciente.antecedentes"
-              outlined
-              class="py-0"
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12" md="6">
-            <v-text-field
-              label="¿A qué se dedica?"
-              v-model.trim="paciente.a_que_se_dedica"
-              outlined
-              class="py-0"
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12" md="6">
-            <v-text-field
-              label="Pasatiempos"
-              v-model.trim="paciente.pasatiempos"
-              outlined
-              class="py-0"
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12" md="6">
-            <v-text-field
-              label="Procedencia"
-              v-model.trim="paciente.procedencia"
-              outlined
-              class="py-0"
-            ></v-text-field>
-          </v-col>
-        </v-row>
-        <v-row class="pa-0 ma-0 mt-2" justify="center">
-          <v-col cols="12">
-            <v-divider></v-divider>
-          </v-col>
-          <v-col cols="6" class="px-6">
-            <v-row justify="center">
-              <v-btn
-                @click="$emit('cancel')"
-                class="mt-4"
-                color="primary"
-                block
+      <v-row align="end">
+        <v-col cols="12" md="6">
+          <v-text-field
+            label="Nombre"
+            v-model.trim="paciente.nombre"
+            outlined
+            class="py-0"
+            :error-messages="nombreErrors"
+            @input="$v.paciente.nombre.$touch()"
+            @blur="$v.paciente.nombre.$touch()"
+          ></v-text-field>
+        </v-col>
+        <v-col cols="12" md="6">
+          <v-menu
+            v-model="dateMenu"
+            :close-on-content-click="false"
+            :nudge-right="40"
+            transition="scale-transition"
+            offset-y
+            min-width="auto"
+            @blur="dateMenu = true"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
+                label="Fecha de Nacimiento"
+                readonly
+                v-bind="attrs"
+                v-on="on"
+                :value="computedDateFormatted"
                 outlined
-              >
-                Canclar
-              </v-btn>
-            </v-row>
-          </v-col>
-          <v-col cols="6" class="px-6">
-            <v-row justify="center">
-              <v-btn
-                @click="update()"
-                class="mt-4"
-                color="primary"
-                block
-                :loading="submitting"
-              >
-                Editar
-              </v-btn>
-            </v-row>
-          </v-col>
-        </v-row>
-      </v-container>
+                class="py-0"
+              ></v-text-field>
+            </template>
+            <v-date-picker
+              v-model="paciente.fecha_de_nacimiento"
+              @input="dateMenu = false"
+              locale="es-us"
+              no-title
+              scrollable
+              :max="new Date().toISOString().slice(0, 10)"
+            ></v-date-picker>
+          </v-menu>
+        </v-col>
+        <v-col cols="12" md="6">
+          <v-text-field
+            label="Antecedentes"
+            v-model.trim="paciente.antecedentes"
+            outlined
+            class="py-0"
+          ></v-text-field>
+        </v-col>
+        <v-col cols="12" md="6">
+          <v-text-field
+            label="¿A qué se dedica?"
+            v-model.trim="paciente.a_que_se_dedica"
+            outlined
+            class="py-0"
+          ></v-text-field>
+        </v-col>
+        <v-col cols="12" md="6">
+          <v-text-field
+            label="Pasatiempos"
+            v-model.trim="paciente.pasatiempos"
+            outlined
+            class="py-0"
+          ></v-text-field>
+        </v-col>
+        <v-col cols="12" md="6">
+          <v-text-field
+            label="Procedencia"
+            v-model.trim="paciente.procedencia"
+            outlined
+            class="py-0"
+          ></v-text-field>
+        </v-col>
+      </v-row>
+      <v-row class="pa-0 ma-0 mt-2" justify="center">
+        <v-col cols="12">
+          <v-divider></v-divider>
+        </v-col>
+        <v-col cols="6" class="px-6">
+          <v-row justify="center">
+            <v-btn
+              @click="$emit('cancel')"
+              class="mt-4"
+              color="primary"
+              block
+              outlined
+            >
+              Cancelar
+            </v-btn>
+          </v-row>
+        </v-col>
+        <v-col cols="6" class="px-6">
+          <v-row justify="center">
+            <v-btn
+              @click="update()"
+              class="mt-4"
+              color="primary"
+              block
+              :loading="submitting"
+            >
+              Editar
+            </v-btn>
+          </v-row>
+        </v-col>
+      </v-row>
     </v-card-text>
   </v-card>
 </template>

@@ -99,6 +99,7 @@
     <v-footer absolute app>
       <v-row justify="center" no-gutters>
         <v-col class="text-center mt-0" cols="12">
+          El Dr. Ortopeda es un movimiento
           <span>&copy; {{ new Date().getFullYear() }}</span>
         </v-col>
       </v-row>
