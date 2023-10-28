@@ -33,5 +33,6 @@
     "babel-jest": "^27.4.4",
     "jest": "^27.4.4",
     "vue-jest": "^3.0.4"
-  }
+  },
+  "packageManager": "yarn@1.22.19"
 }
