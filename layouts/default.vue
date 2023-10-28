@@ -121,6 +121,11 @@ export default {
           title: "Pacientes",
           to: "/",
         },
+        {
+          icon: "mdi-calendar-check",
+          title: "Citas",
+          to: "/citas",
+        },
       ],
       miniVariant: true,
       rightDrawer: false,
