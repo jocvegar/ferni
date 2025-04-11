@@ -95,6 +95,7 @@ export default {
           value: "nombre",
         },
         { text: "Edad", value: "fecha_de_nacimiento" },
+        { text: "Teléfono", value: "telefono" },
         { text: "Antecedentes", value: "antecedentes" },
         { text: "Dedicación", value: "a_que_se_dedica" },
         { text: "Pasatiempos", value: "pasatiempos" },

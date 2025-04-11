@@ -45,6 +45,7 @@
                   :value="computedDateFormatted"
                   outlined
                   class="py-0"
+                  prepend-inner-icon="mdi-calendar"
                 ></v-text-field>
               </template>
               <v-date-picker
@@ -56,6 +57,17 @@
                 :max="new Date().toISOString().slice(0, 10)"
               ></v-date-picker>
             </v-menu>
+          </v-col>
+          <v-col cols="12" md="6">
+            <v-text-field
+              label="Teléfono"
+              :value="computedPhoneFormatted"
+              outlined
+              class="py-0"
+              type="tel"
+              prepend-inner-icon="mdi-phone"
+              @input="onPhoneInput"
+            ></v-text-field>
           </v-col>
           <v-col cols="12" md="6">
             <v-text-field
@@ -81,7 +93,9 @@
               class="py-0"
             ></v-text-field>
           </v-col>
-          <v-col cols="12" md="6">
+        </v-row>
+        <v-row>
+          <v-col cols="12">
             <v-text-field
               label="Procedencia"
               v-model.trim="paciente.procedencia"
@@ -89,8 +103,6 @@
               class="py-0"
             ></v-text-field>
           </v-col>
-        </v-row>
-        <v-row>
           <v-col cols="12">
             <v-text-field
               label="Información clinica"
@@ -137,9 +149,7 @@ import { required } from "vuelidate/lib/validators";
 export default {
   name: "NuevoPaciente",
   mixins: [auth, validationMixin],
-  head: {
-    title: "Nuevo Paciente",
-  },
+  head: { title: "Nuevo Paciente" },
   validations: {
     paciente: {
       nombre: { required },
@@ -156,6 +166,7 @@ export default {
         a_que_se_dedica: "",
         pasatiempos: "",
         procedencia: "",
+        telefono: "",
       },
       informacion_clinica: "",
       diagnostico: "",
@@ -202,10 +213,21 @@ export default {
       const [year, month, day] = date.split("-");
       return `${month}/${day}/${year}`;
     },
+    onPhoneInput(value) {
+      const raw = value.replace(/\D/g, "").slice(0, 8);
+      this.paciente.telefono = raw;
+    },
   },
   computed: {
     computedDateFormatted() {
       return this.formatDate(this.paciente.fecha_de_nacimiento);
+    },
+    computedPhoneFormatted() {
+      const raw = this.paciente.telefono;
+
+      if (!raw) return "";
+      if (raw.length <= 4) return raw;
+      return `${raw.slice(0, 4)}-${raw.slice(4)}`;
     },
     nombreErrors() {
       const errors = [];

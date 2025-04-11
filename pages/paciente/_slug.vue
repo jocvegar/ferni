@@ -34,6 +34,38 @@
         </v-col>
         <v-col cols="12" md="6">
           <v-list-item-title class="mb-1 ml-3">
+            <span class="font-weight-medium">Teléfono:</span>
+            <template v-if="paciente.telefono">
+              <a
+                :href="`tel:${paciente.telefono}`"
+                class="ml-2"
+                style="text-decoration: none"
+              >
+                {{ paciente.telefono | formatPhone }}
+              </a>
+            </template>
+            <template v-else>
+              <span class="ml-2">{{ paciente.telefono | formatPhone }}</span>
+            </template>
+          </v-list-item-title>
+        </v-col>
+
+        <v-col v-if="paciente.telefono" cols="12" md="6">
+          <v-list-item-title class="mb-1 ml-3" style="color: #25d366">
+            <span class="font-weight-medium">WhatsApp:</span>
+            <a
+              :href="`https://wa.me/504${paciente.telefono}`"
+              target="_blank"
+              rel="noopener"
+              class="ml-2"
+            >
+              <v-icon class="mr-1">mdi-whatsapp</v-icon>
+            </a>
+          </v-list-item-title>
+        </v-col>
+
+        <v-col cols="12" md="6">
+          <v-list-item-title class="mb-1 ml-3">
             <span class="font-weight-medium"> A que se dedica: </span>
             {{ paciente.a_que_se_dedica }}
           </v-list-item-title>
@@ -327,6 +359,11 @@ export default {
     formatDate(date) {
       if (date?.length === 0) return "Sin información";
       return new Date(date?.seconds * 1000).toLocaleDateString("en-GB");
+    },
+    formatPhone(value) {
+      if (!value) return "-";
+
+      return `${value?.slice(0, 4)}-${value?.slice(4)}`;
     },
   },
   computed: {
