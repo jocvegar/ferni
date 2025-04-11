@@ -59,6 +59,17 @@
         </v-col>
         <v-col cols="12" md="6">
           <v-text-field
+            label="Teléfono"
+            :value="computedPhoneFormatted"
+            outlined
+            class="py-0"
+            type="tel"
+            prepend-inner-icon="mdi-phone"
+            @input="onPhoneInput"
+          ></v-text-field>
+        </v-col>
+        <v-col cols="12" md="6">
+          <v-text-field
             label="Antecedentes"
             v-model.trim="paciente.antecedentes"
             outlined
@@ -157,6 +168,10 @@ export default {
       const [year, month, day] = date.split("-");
       return `${month}/${day}/${year}`;
     },
+    onPhoneInput(value) {
+      const raw = value.replace(/\D/g, "").slice(0, 8);
+      this.paciente.telefono = raw;
+    },
     async update() {
       this.$v.$touch();
       if (this.$v.paciente.$invalid) return;
@@ -188,6 +203,13 @@ export default {
   computed: {
     computedDateFormatted() {
       return this.formatDate(this.paciente.fecha_de_nacimiento);
+    },
+    computedPhoneFormatted() {
+      const raw = this.paciente.telefono;
+
+      if (!raw) return "";
+      if (raw.length <= 4) return raw;
+      return `${raw.slice(0, 4)}-${raw.slice(4)}`;
     },
     nombreErrors() {
       const errors = [];
