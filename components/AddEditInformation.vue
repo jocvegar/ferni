@@ -124,7 +124,7 @@ export default {
       type: String,
       required: true,
     },
-    parentId: {
+    patientId: {
       type: String,
       required: true,
     },
@@ -132,10 +132,10 @@ export default {
       type: Object,
       required: false,
     },
-    parentName: {
+    patientName: {
       type: String,
       required: true,
-      default: "SinNombre",
+      default: "Sin Nombre",
     },
   },
   mounted() {
@@ -149,12 +149,12 @@ export default {
   methods: {
     async submit() {
       this.submitting = true;
-      await this.uploadIFiles(this.images);
+      await this.uploadFiles(this.images);
       try {
         await addDoc(
-          collection(db, "pacientes", this.parentId, "informacion_clinica"),
+          collection(db, "pacientes", this.patientId, "informacion_clinica"),
           {
-            userId: this.parentId,
+            userId: this.patientId,
             informacion_clinica: this.informacion.informacion_clinica,
             diagnostico: this.informacion.diagnostico,
             fecha: serverTimestamp(),
@@ -175,11 +175,11 @@ export default {
     },
     async update() {
       this.submitting = true;
-      await this.uploadIFiles(this.images);
+      await this.uploadFiles(this.images);
       const informacionRed = doc(
         db,
         "pacientes",
-        this.parentId,
+        this.patientId,
         "informacion_clinica",
         this.informacion.id
       );
@@ -196,11 +196,11 @@ export default {
     setImages(files) {
       this.images = files;
     },
-    async uploadIFiles(files) {
+    async uploadFiles(files) {
       for (const file of files) {
         try {
           if (file && file.name) {
-            const filePath = `info-clinica/${this.parentName.replace(
+            const filePath = `info-clinica/${this.patientName.replace(
               /\s/g,
               ""
             )}/${Date.now()}-${file.name.replace(/\s/g, "")}`;

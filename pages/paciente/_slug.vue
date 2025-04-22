@@ -1,30 +1,28 @@
 <template>
   <div>
-    <v-row class="my-2">
-      <v-col cols="12" align="right">
+    <v-card elevation="2" class="my-8">
+      <v-card-actions class="justify-end">
         <v-btn color="primary" elevation="2" raised to="/" nuxt outlined>
           <v-icon>mdi-chevron-left</v-icon>
           Atras
         </v-btn>
         <v-btn
+          v-if="paciente"
           color="primary"
           elevation="2"
           raised
           @click="edit()"
-          v-if="paciente"
         >
-          <v-icon>mdi-pencil-outline </v-icon>
+          <v-icon>mdi-pencil-outline</v-icon>
           Editar
         </v-btn>
-      </v-col>
-    </v-row>
-    <v-card elevation="2">
+      </v-card-actions>
       <v-card-title>
         <span class="title">
           {{ paciente.nombre }}
         </span>
       </v-card-title>
-      <v-divider class="mb-4"></v-divider>
+      <v-divider class="my-2"></v-divider>
       <v-row>
         <v-col cols="12" md="6">
           <v-list-item-title class="mb-1 ml-3">
@@ -49,7 +47,6 @@
             </template>
           </v-list-item-title>
         </v-col>
-
         <v-col v-if="paciente.telefono" cols="12" md="6">
           <v-list-item-title class="mb-1 ml-3" style="color: #25d366">
             <span class="font-weight-medium">WhatsApp:</span>
@@ -63,51 +60,48 @@
             </a>
           </v-list-item-title>
         </v-col>
-
         <v-col cols="12" md="6">
           <v-list-item-title class="mb-1 ml-3">
-            <span class="font-weight-medium"> A que se dedica: </span>
+            <span class="font-weight-medium">A que se dedica:</span>
             {{ paciente.a_que_se_dedica }}
           </v-list-item-title>
         </v-col>
         <v-col cols="12" md="6">
           <v-list-item-title class="mb-1 ml-3">
-            <span class="font-weight-medium"> Pasatiempos: </span>
+            <span class="font-weight-medium">Pasatiempos:</span>
             {{ paciente.pasatiempos }}
           </v-list-item-title>
         </v-col>
         <v-col cols="12" md="6">
           <v-list-item-title class="mb-1 ml-3">
-            <span class="font-weight-medium"> Antecedentes: </span>
+            <span class="font-weight-medium">Antecedentes:</span>
             {{ paciente.antecedentes }}
           </v-list-item-title>
         </v-col>
         <v-col cols="12" md="6">
           <v-list-item-title class="mb-1 ml-3">
-            <span class="font-weight-medium"> Procedencia: </span>
+            <span class="font-weight-medium">Procedencia:</span>
             {{ paciente.procedencia }}
           </v-list-item-title>
         </v-col>
       </v-row>
     </v-card>
 
-    <v-row class="my-4">
-      <v-col cols="12" align="right">
+    <v-card elevation="2" class="my-8">
+      <v-card-actions class="justify-end">
         <v-btn color="primary" elevation="2" @click="addEditInfo('new', null)">
           <v-icon>mdi-plus</v-icon>
-          Agregar Informacion
+          Agregar Consulta
         </v-btn>
-      </v-col>
-    </v-row>
-
-    <v-card elevation="2">
+      </v-card-actions>
       <v-card-title>
-        <span class="title"> Consultas </span>
+        <span class="title">Consultas</span>
       </v-card-title>
+      <v-divider class="my-2"></v-divider>
       <v-data-table
         :headers="headers"
         :items="cleanInformaciones"
-        :loading="$fetchState.pending"
+        :loading="!infoLoaded"
         item-key="id"
         :sort-by="['formatDate']"
         :sort-asc="true"
@@ -129,11 +123,10 @@
             Ver Imágenes
           </v-btn>
         </template>
-
         <template v-slot:[`item.options`]="{ item }">
           <v-btn
             small
-            class="ml-3 white--text"
+            class="mx-3 white--text"
             color="red darken-4"
             elevation="2"
             outlined
@@ -143,11 +136,63 @@
           </v-btn>
           <v-btn
             small
-            class="ml-3 white--text"
+            class="mx-3 white--text"
             color="blue darken-4"
             elevation="2"
             outlined
             @click="addEditInfo('edit', item)"
+          >
+            Editar
+          </v-btn>
+        </template>
+      </v-data-table>
+    </v-card>
+
+    <v-card elevation="2" class="my-8">
+      <v-card-actions class="justify-end">
+        <v-btn
+          color="primary"
+          elevation="2"
+          @click="openAddEditAppointmentModal(false, {})"
+        >
+          <v-icon>mdi-plus</v-icon>
+          Agregar Cita
+        </v-btn>
+      </v-card-actions>
+      <v-card-title>
+        <span class="title"> Citas </span>
+      </v-card-title>
+      <v-divider class="my-2"></v-divider>
+      <v-data-table
+        :headers="appointmentHeaders"
+        :items="cleanAppointments"
+        :loading="!appointmentsLoaded"
+        item-key="id"
+        :sort-by="['formatDateTime']"
+        :sort-asc="true"
+      >
+        <template v-slot:[`item.start`]="{ item }">
+          {{ item.start | formatDateTime }}
+        </template>
+
+        <template v-slot:[`item.options`]="{ item }">
+          <v-btn
+            small
+            class="mx-3 white--text"
+            color="red darken-4"
+            elevation="2"
+            outlined
+            @click="deleteAppointment(item)"
+          >
+            Eliminar
+          </v-btn>
+          <v-btn
+            small
+            class="mx-3 white--text"
+            color="blue darken-4"
+            elevation="2"
+            outlined
+            @click="openAddEditAppointmentModal(true, item)"
           >
             Editar
           </v-btn>
@@ -172,8 +217,8 @@
         :paciente="paciente"
         :item="item"
         :type="type"
-        :parentId="paciente.id"
-        :parentName="paciente.nombre"
+        :patientId="paciente.id"
+        :patientName="paciente.nombre"
       ></add-edit-information>
     </v-dialog>
 
@@ -194,6 +239,16 @@
         :item="activeItem"
       ></edit-images-modal>
     </v-dialog>
+
+    <v-dialog v-model="addEditAppointmentModal">
+      <add-edit-appointment
+        @cancel="addEditAppointmentModal = false"
+        @success="handleAppointmentSuccess"
+        :key="randomKey"
+        :selectedAppointment="selectedEvent"
+        :appointmentPatientId="appointmentPatientId"
+      ></add-edit-appointment>
+    </v-dialog>
   </div>
 </template>
 
@@ -213,11 +268,11 @@ import auth from "@/mixins/authMixin";
 
 export default {
   mixins: [auth],
-  head: {
-    title: this?.paciente?.nombre || "Paciente",
-  },
+  head: { title: this?.paciente?.nombre || "Paciente" },
   data() {
     return {
+      infoLoaded: false,
+      appointmentsLoaded: false,
       informacion: [],
       randomKey: 0,
       editModal: false,
@@ -236,6 +291,16 @@ export default {
         { text: "Imágenes", value: "pictures", sortable: false },
         { text: "Acciones", value: "options", sortable: false, width: "300" },
       ],
+      appointments: [],
+      appointmentHeaders: [
+        { text: "Fecha", value: "start" },
+        { text: "Clínica", value: "clinic" },
+        { text: "Detalles", value: "details" },
+        { text: "Acciones", value: "options", sortable: false, width: "300" },
+      ],
+      addEditAppointmentModal: false,
+      selectedEvent: {},
+      appointmentPatientId: null,
     };
   },
   async asyncData({ params }) {
@@ -250,6 +315,7 @@ export default {
     return { paciente };
   },
   async fetch() {
+    const _this = this;
     const informationDocRef = collection(
       db,
       "pacientes",
@@ -257,7 +323,14 @@ export default {
       "informacion_clinica"
     );
 
-    return new Promise((resolve, reject) => {
+    const appointmentDocRef = collection(
+      db,
+      "pacientes",
+      this.paciente.id,
+      "appointments"
+    );
+
+    return new Promise((resolve) => {
       onSnapshot(
         query(informationDocRef, orderBy("fecha", "desc")),
         { includeMetadataChanges: true },
@@ -268,9 +341,34 @@ export default {
               ...change.doc.data(),
             });
           });
-          resolve({ informaciones: this.informaciones });
+          this.infoLoaded = true;
+          maybeResolve();
         }
       );
+
+      onSnapshot(
+        query(appointmentDocRef, orderBy("start", "desc")),
+        { includeMetadataChanges: true },
+        (snapshot) => {
+          snapshot.docChanges().forEach((change) => {
+            this.appointments.push({
+              id: change.doc.id,
+              ...change.doc.data(),
+            });
+          });
+          this.appointmentsLoaded = true;
+          maybeResolve();
+        }
+      );
+
+      function maybeResolve() {
+        if (_this.infoLoaded && _this.appointmentsLoaded) {
+          resolve({
+            informaciones: _this.informaciones,
+            appointments: _this.appointments,
+          });
+        }
+      }
     });
   },
   fetchOnServer: false,
@@ -354,11 +452,58 @@ export default {
         }
       }
     },
+    async deleteAppointment(item) {
+      if (confirm(`¿Estás seguro de eliminar cita?`)) {
+        try {
+          await deleteDoc(
+            doc(db, "pacientes", `${item.patientId}/appointments`, item.id)
+          ).then(async () => {
+            this.$store.commit("SET_SNACKBAR", "Cita eliminada");
+            this.appointments = this.appointments.filter(function (el) {
+              return el.id != item.id;
+            });
+          });
+        } catch (err) {
+          this.$store.commit(
+            "SET_SNACKBAR",
+            "Ocurrió un error inesperado, inténtelo nuevamente."
+          );
+          console.log("error", err);
+        }
+      }
+    },
+    handleAppointmentSuccess(data) {
+      this.addEditAppointmentModal = false;
+      this.$store.commit("SET_SNACKBAR", data);
+    },
+    openAddEditAppointmentModal(edit, item) {
+      this.addEditAppointmentModal = true;
+      this.randomKey = Math.random();
+      if (edit === false) {
+        this.appointmentPatientId = this?.paciente?.id;
+      } else {
+        this.selectedEvent = item;
+        this.appointmentPatientId = null;
+      }
+    },
   },
   filters: {
     formatDate(date) {
       if (date?.length === 0) return "Sin información";
+
       return new Date(date?.seconds * 1000).toLocaleDateString("en-GB");
+    },
+    formatDateTime(date) {
+      if (!date) return "Sin información";
+
+      const d = new Date(date);
+      const hours = d.getHours();
+
+      return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()} ${
+        hours % 12 || 12
+      }:${d.getMinutes().toString().padStart(2, "0")} ${
+        hours < 12 ? "AM" : "PM"
+      }`;
     },
     formatPhone(value) {
       if (!value) return "-";
@@ -370,6 +515,11 @@ export default {
     cleanInformaciones: function () {
       return [
         ...new Map(this.informaciones.map((item) => [item.id, item])).values(),
+      ];
+    },
+    cleanAppointments: function () {
+      return [
+        ...new Map(this.appointments.map((item) => [item.id, item])).values(),
       ];
     },
   },
