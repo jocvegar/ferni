@@ -1,5 +1,5 @@
 import { initializeApp, getApps } from "firebase/app";
-import { getFirestore, enableIndexedDbPersistence } from "firebase/firestore";
+import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 
@@ -26,17 +26,5 @@ if (!apps.length) {
 const db = getFirestore(firebaseApp);
 const auth = getAuth(firebaseApp);
 const storage = getStorage(firebaseApp);
-
-if (process.env.NODE_ENV === "production") {
-  enableIndexedDbPersistence(db, {
-    experimentalTabSynchronization: true,
-  }).catch((err) => {
-    if (err.code == "failed-precondition") {
-      console.log("err", err);
-    } else if (err.code == "unimplemented") {
-      console.log("err", err);
-    }
-  });
-}
 
 export { db, auth, storage };
