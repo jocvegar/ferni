@@ -1,103 +1,135 @@
 <template>
-  <div>
-    <v-card elevation="2" class="my-8">
-      <v-card-actions class="justify-end">
-        <v-btn color="primary" elevation="2" raised to="/" nuxt outlined>
+  <div class="patient-detail-container">
+    <v-card elevation="0" rounded class="patient-header-card mb-6">
+      <v-card-actions class="pa-4">
+        <v-spacer></v-spacer>
+        <v-btn
+          color="grey-lighten-1"
+          variant="outlined"
+          to="/"
+          nuxt
+          rounded
+          class="mr-2"
+        >
           <v-icon>mdi-chevron-left</v-icon>
           Atras
         </v-btn>
         <v-btn
           v-if="paciente"
           color="primary"
-          elevation="2"
-          raised
+          variant="flat"
+          rounded
+          class="px-2"
           @click="edit()"
         >
-          <v-icon>mdi-pencil-outline</v-icon>
+          <v-icon left>mdi-pencil-outline</v-icon>
           Editar
         </v-btn>
       </v-card-actions>
-      <v-card-title>
-        <span class="title">
-          {{ paciente.nombre }}
-        </span>
+
+      <v-card-title class="px-6 pb-2">
+        <div class="d-flex align-center">
+          <v-avatar color="primary" size="48" class="mr-4">
+            <span class="text-h6 white--text">
+              {{ getInitials(paciente.nombre) }}
+            </span>
+          </v-avatar>
+          <span class="patient-name">{{ paciente.nombre }}</span>
+        </div>
       </v-card-title>
-      <v-divider class="my-2"></v-divider>
-      <v-row>
+
+      <v-divider class="mx-6 my-4"></v-divider>
+
+      <v-row class="px-6 pb-6">
         <v-col cols="12" md="6">
-          <v-list-item-title class="mb-1 ml-3">
-            <span class="font-weight-medium"> Edad:</span>
-            {{ getAge(paciente.fecha_de_nacimiento) }}
+          <v-list-item-title class="mb-3 info-item">
+            <v-icon size="18" class="mr-2">mdi-cake-variant</v-icon>
+            <span class="info-label">Edad:</span>
+            <span class="info-value">{{
+              getAge(paciente.fecha_de_nacimiento)
+            }}</span>
           </v-list-item-title>
         </v-col>
         <v-col cols="12" md="6">
-          <v-list-item-title class="mb-1 ml-3">
-            <span class="font-weight-medium">Teléfono:</span>
+          <v-list-item-title class="mb-3 info-item">
+            <v-icon size="18" class="mr-2">mdi-phone</v-icon>
+            <span class="info-label">Teléfono:</span>
             <template v-if="paciente.telefono">
-              <a
-                :href="`tel:${paciente.telefono}`"
-                class="ml-2"
-                style="text-decoration: none"
-              >
+              <a :href="`tel:${paciente.telefono}`" class="info-link">
                 {{ paciente.telefono | formatPhone }}
               </a>
             </template>
             <template v-else>
-              <span class="ml-2">{{ paciente.telefono | formatPhone }}</span>
+              <span class="info-value">{{
+                paciente.telefono | formatPhone
+              }}</span>
             </template>
           </v-list-item-title>
         </v-col>
         <v-col v-if="paciente.telefono" cols="12" md="6">
-          <v-list-item-title class="mb-1 ml-3" style="color: #25d366">
-            <span class="font-weight-medium">WhatsApp:</span>
+          <v-list-item-title class="mb-3 info-item">
+            <v-icon size="18" class="mr-2" color="#25d366">mdi-whatsapp</v-icon>
+            <span class="info-label">WhatsApp:</span>
             <a
               :href="`https://wa.me/504${paciente.telefono}`"
               target="_blank"
               rel="noopener"
-              class="ml-2"
+              class="whatsapp-link"
             >
-              <v-icon class="mr-1">mdi-whatsapp</v-icon>
+              Enviar mensaje
             </a>
           </v-list-item-title>
         </v-col>
         <v-col cols="12" md="6">
-          <v-list-item-title class="mb-1 ml-3">
-            <span class="font-weight-medium">A que se dedica:</span>
-            {{ paciente.a_que_se_dedica }}
+          <v-list-item-title class="mb-3 info-item">
+            <v-icon size="18" class="mr-2">mdi-briefcase</v-icon>
+            <span class="info-label">A que se dedica:</span>
+            <span class="info-value">{{ paciente.a_que_se_dedica }}</span>
           </v-list-item-title>
         </v-col>
         <v-col cols="12" md="6">
-          <v-list-item-title class="mb-1 ml-3">
-            <span class="font-weight-medium">Pasatiempos:</span>
-            {{ paciente.pasatiempos }}
+          <v-list-item-title class="mb-3 info-item">
+            <v-icon size="18" class="mr-2">mdi-gamepad-variant</v-icon>
+            <span class="info-label">Pasatiempos:</span>
+            <span class="info-value">{{ paciente.pasatiempos }}</span>
           </v-list-item-title>
         </v-col>
         <v-col cols="12" md="6">
-          <v-list-item-title class="mb-1 ml-3">
-            <span class="font-weight-medium">Antecedentes:</span>
-            {{ paciente.antecedentes }}
+          <v-list-item-title class="mb-3 info-item">
+            <v-icon size="18" class="mr-2">mdi-alert-circle</v-icon>
+            <span class="info-label">Antecedentes:</span>
+            <span class="info-value">{{ paciente.antecedentes }}</span>
           </v-list-item-title>
         </v-col>
         <v-col cols="12" md="6">
-          <v-list-item-title class="mb-1 ml-3">
-            <span class="font-weight-medium">Procedencia:</span>
-            {{ paciente.procedencia }}
+          <v-list-item-title class="mb-3 info-item">
+            <v-icon size="18" class="mr-2">mdi-map-marker</v-icon>
+            <span class="info-label">Procedencia:</span>
+            <span class="info-value">{{ paciente.procedencia }}</span>
           </v-list-item-title>
         </v-col>
       </v-row>
     </v-card>
 
-    <v-card elevation="2" class="my-8">
-      <v-card-actions class="justify-end">
-        <v-btn color="primary" elevation="2" @click="addEditInfo('new', null)">
-          <v-icon>mdi-plus</v-icon>
+    <!-- Consultas -->
+    <v-card elevation="0" rounded class="section-card mb-6">
+      <v-card-actions class="pa-4">
+        <v-spacer></v-spacer>
+        <v-btn
+          color="primary"
+          variant="flat"
+          rounded
+          @click="addEditInfo('new', null)"
+        >
+          <v-icon left>mdi-plus</v-icon>
           Agregar Consulta
         </v-btn>
       </v-card-actions>
-      <v-card-title>
-        <span class="title">Consultas</span>
+      <v-card-title class="px-6">
+        <v-icon color="primary" class="mr-2">mdi-clipboard-text</v-icon>
+        <span class="section-title">Consultas</span>
       </v-card-title>
-      <v-divider class="my-2"></v-divider>
+      <v-divider class="mx-6 my-2"></v-divider>
       <v-data-table
         :headers="headers"
         :items="cleanInformaciones"
@@ -105,6 +137,7 @@
         item-key="id"
         :sort-by="['formatDate']"
         :sort-asc="true"
+        hover
       >
         <template v-slot:[`item.fecha`]="{ item }">
           {{ item.fecha | formatDate }}
@@ -112,10 +145,8 @@
         <template v-slot:[`item.pictures`]="{ item }">
           <v-btn
             small
-            class="white--text"
             color="blue-grey darken-1"
-            elevation="2"
-            outlined
+            variant="outlined"
             rounded
             v-if="item.images && item.images.length > 0"
             @click="showImages(item)"
@@ -126,20 +157,18 @@
         <template v-slot:[`item.options`]="{ item }">
           <v-btn
             small
-            class="mx-3 white--text"
+            class="mx-2 white--text"
             color="red darken-4"
-            elevation="2"
-            outlined
+            variant="outlined"
             @click="deleteInfo(item)"
           >
             Eliminar
           </v-btn>
           <v-btn
             small
-            class="mx-3 white--text"
+            class="mx-2 white--text"
             color="blue darken-4"
-            elevation="2"
-            outlined
+            variant="outlined"
             @click="addEditInfo('edit', item)"
           >
             Editar
@@ -148,21 +177,25 @@
       </v-data-table>
     </v-card>
 
-    <v-card elevation="2" class="my-8">
-      <v-card-actions class="justify-end">
+    <!-- Citas -->
+    <v-card elevation="0" rounded class="section-card">
+      <v-card-actions class="pa-4">
+        <v-spacer></v-spacer>
         <v-btn
           color="primary"
-          elevation="2"
+          variant="flat"
+          rounded
           @click="openAddEditAppointmentModal(false, {})"
         >
-          <v-icon>mdi-plus</v-icon>
+          <v-icon left>mdi-plus</v-icon>
           Agregar Cita
         </v-btn>
       </v-card-actions>
-      <v-card-title>
-        <span class="title"> Citas </span>
+      <v-card-title class="px-6">
+        <v-icon color="primary" class="mr-2">mdi-calendar-clock</v-icon>
+        <span class="section-title">Citas</span>
       </v-card-title>
-      <v-divider class="my-2"></v-divider>
+      <v-divider class="mx-6 my-2"></v-divider>
       <v-data-table
         :headers="appointmentHeaders"
         :items="cleanAppointments"
@@ -170,6 +203,7 @@
         item-key="id"
         :sort-by="['formatDateTime']"
         :sort-asc="true"
+        hover
       >
         <template v-slot:[`item.start`]="{ item }">
           {{ item.start | formatDateTime }}
@@ -178,20 +212,18 @@
         <template v-slot:[`item.options`]="{ item }">
           <v-btn
             small
-            class="mx-3 white--text"
+            class="mx-2 white--text"
             color="red darken-4"
-            elevation="2"
-            outlined
+            variant="outlined"
             @click="deleteAppointment(item)"
           >
             Eliminar
           </v-btn>
           <v-btn
             small
-            class="mx-3 white--text"
+            class="mx-2 white--text"
             color="blue darken-4"
-            elevation="2"
-            outlined
+            variant="outlined"
             @click="openAddEditAppointmentModal(true, item)"
           >
             Editar
@@ -373,6 +405,14 @@ export default {
   },
   fetchOnServer: false,
   methods: {
+    getInitials(name) {
+      if (!name) return "?";
+      const parts = name.split(" ");
+      if (parts.length >= 2) {
+        return (parts[0][0] + parts[1][0]).toUpperCase();
+      }
+      return name.substring(0, 2).toUpperCase();
+    },
     edit() {
       this.randomKey = Math.random();
       this.editModal = true;
@@ -525,3 +565,68 @@ export default {
   },
 };
 </script>
+
+<style scoped lang="scss">
+.patient-detail-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.patient-header-card,
+.section-card {
+  border: 1px solid #e0e0e0;
+}
+
+.patient-name {
+  font-size: 26px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  .info-label {
+    font-weight: 500;
+    color: #666;
+  }
+
+  .info-value {
+    color: #1a1a1a;
+  }
+}
+
+.info-link {
+  color: #1976d2;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.whatsapp-link {
+  color: #25d366;
+  text-decoration: none;
+  font-weight: 500;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+:deep(.v-data-table) {
+  .v-data-table__tr:hover {
+    background-color: #f5f5f5 !important;
+  }
+}
+</style>

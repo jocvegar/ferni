@@ -1,29 +1,36 @@
 <template>
-  <div>
-    <v-row class="my-2">
+  <div class="new-patient-container">
+    <v-row class="mb-4">
       <v-col cols="12" align="right">
-        <v-btn color="primary" elevation="2" raised to="/" nuxt>
-          <v-icon>mdi-chevron-left</v-icon>
+        <v-btn color="grey lighten-1" outlined to="/" nuxt rounded>
+          <v-icon left>mdi-chevron-left</v-icon>
           Atras
         </v-btn>
       </v-col>
     </v-row>
 
-    <v-card elevation="2">
-      <v-card-title>
-        <span class="title"> Paciente Nuevo </span>
+    <v-card elevation="0" rounded="lg" class="form-card">
+      <v-card-title class="card-header">
+        <v-icon color="primary" class="mr-3">mdi-account-plus</v-icon>
+        <span class="form-title">Paciente Nuevo</span>
       </v-card-title>
-      <v-card-text>
-        <v-row align="end">
+      <v-divider></v-divider>
+      <v-card-text class="pa-6">
+        <div class="section-label mb-4">
+          <v-icon small class="mr-2">mdi-account</v-icon>
+          Información Personal
+        </div>
+        <v-row>
           <v-col cols="12" md="6">
             <v-text-field
               label="Nombre"
               v-model.trim="paciente.nombre"
               outlined
-              class="py-0"
+              dense
               :error-messages="nombreErrors"
               @input="$v.paciente.nombre.$touch()"
               @blur="$v.paciente.nombre.$touch()"
+              prepend-inner-icon="mdi-account"
             ></v-text-field>
           </v-col>
           <v-col cols="12" md="6">
@@ -34,7 +41,6 @@
               transition="scale-transition"
               offset-y
               min-width="auto"
-              @blur="dateMenu = true"
             >
               <template v-slot:activator="{ on, attrs }">
                 <v-text-field
@@ -44,8 +50,8 @@
                   v-on="on"
                   :value="computedDateFormatted"
                   outlined
-                  class="py-0"
-                  prepend-inner-icon="mdi-calendar"
+                  dense
+                  prepend-inner-icon="mdi-cake-variant"
                 ></v-text-field>
               </template>
               <v-date-picker
@@ -63,7 +69,7 @@
               label="Teléfono"
               :value="computedPhoneFormatted"
               outlined
-              class="py-0"
+              dense
               type="tel"
               prepend-inner-icon="mdi-phone"
               @input="onPhoneInput"
@@ -71,18 +77,27 @@
           </v-col>
           <v-col cols="12" md="6">
             <v-text-field
-              label="Antecedentes"
-              v-model.trim="paciente.antecedentes"
+              label="Procedencia"
+              v-model.trim="paciente.procedencia"
               outlined
-              class="py-0"
+              dense
+              prepend-inner-icon="mdi-map-marker"
             ></v-text-field>
           </v-col>
+        </v-row>
+
+        <div class="section-label mb-4 mt-6">
+          <v-icon small class="mr-2">mdi-information</v-icon>
+          Información Adicional
+        </div>
+        <v-row>
           <v-col cols="12" md="6">
             <v-text-field
               label="¿A qué se dedica?"
               v-model.trim="paciente.a_que_se_dedica"
               outlined
-              class="py-0"
+              dense
+              prepend-inner-icon="mdi-briefcase"
             ></v-text-field>
           </v-col>
           <v-col cols="12" md="6">
@@ -90,55 +105,67 @@
               label="Pasatiempos"
               v-model.trim="paciente.pasatiempos"
               outlined
-              class="py-0"
+              dense
+              prepend-inner-icon="mdi-gamepad-variant"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12">
+            <v-text-field
+              label="Antecedentes"
+              v-model.trim="paciente.antecedentes"
+              outlined
+              dense
+              prepend-inner-icon="mdi-alert-circle"
             ></v-text-field>
           </v-col>
         </v-row>
+
+        <div class="section-label mb-4 mt-6">
+          <v-icon small class="mr-2">mdi-clipboard-text</v-icon>
+          Primera Consulta (Opcional)
+        </div>
         <v-row>
           <v-col cols="12">
-            <v-text-field
-              label="Procedencia"
-              v-model.trim="paciente.procedencia"
-              outlined
-              class="py-0"
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12">
-            <v-text-field
-              label="Información clinica"
+            <v-textarea
+              label="Información clínica"
               v-model.trim="informacion_clinica"
               outlined
-              class="py-0"
-            ></v-text-field>
+              rows="3"
+              prepend-inner-icon="mdi-file-document"
+            ></v-textarea>
           </v-col>
           <v-col cols="12">
-            <v-text-field
+            <v-textarea
               label="Diagnóstico"
               v-model.trim="diagnostico"
               outlined
-              class="py-0"
-            ></v-text-field>
+              rows="2"
+              prepend-inner-icon="mdi-stethoscope"
+            ></v-textarea>
           </v-col>
         </v-row>
-        <v-row class="pa-0 ma-0 mt-2">
-          <v-col cols="6" offset="3">
-            <v-row align="center" justify="end">
-              <v-btn
-                @click="submit()"
-                class="mt-4"
-                color="primary"
-                block
-                :loading="submitting"
-              >
-                Guardar
-              </v-btn>
-            </v-row>
+
+        <v-row class="mt-4">
+          <v-col cols="12" sm="6" offset-sm="3">
+            <v-btn
+              @click="submit()"
+              color="primary"
+              block
+              large
+              rounded
+              :loading="submitting"
+              elevation="0"
+            >
+              <v-icon left>mdi-content-save</v-icon>
+              Guardar Paciente
+            </v-btn>
           </v-col>
         </v-row>
       </v-card-text>
     </v-card>
   </div>
 </template>
+
 <script>
 import { db } from "~/plugins/firebase.js";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
@@ -238,3 +265,34 @@ export default {
   },
 };
 </script>
+
+<style scoped lang="scss">
+.new-patient-container {
+  margin: 0 auto;
+  padding: 12px;
+}
+
+.form-card {
+  border: 1px solid #e0e0e0;
+}
+
+.card-header {
+  padding: 20px 24px;
+}
+
+.form-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.section-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+}
+</style>

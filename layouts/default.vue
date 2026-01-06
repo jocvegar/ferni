@@ -75,7 +75,7 @@
             </v-btn>
           </template>
         </v-snackbar>
-        <Nuxt />
+        <Nuxt v-if="mounted" />
       </v-container>
     </v-main>
     <v-navigation-drawer v-model="rightDrawer" right temporary fixed>
@@ -131,7 +131,11 @@ export default {
       rightDrawer: false,
       leftDrawer: false,
       title: "Dr. Ortopeda",
+      mounted: false,
     };
+  },
+  mounted() {
+    this.mounted = true;
   },
   methods: {
     handleLogoClick() {

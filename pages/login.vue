@@ -1,20 +1,24 @@
 <template>
   <v-card class="pa-8 ma-8 my-12">
-    <v-card-title>
-      <span class="title mb-4"> Ingresar </span>
-    </v-card-title>
+    <v-card-title><span class="title mb-4">Ingresar</span></v-card-title>
     <form>
-      <v-text-field v-model.trim="email" label="E-mail" required></v-text-field>
+      <div class="text-subtitle-1 mb-1">E-mail</div>
       <v-text-field
-        :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+        v-model.trim="email"
+        placeholder="example@mail.com"
+        variant="outlined"
+      ></v-text-field>
+
+      <div class="text-subtitle-1 mb-1">Password</div>
+      <v-text-field
         v-model.trim="password"
-        label="Pasword"
-        required
         :type="showPassword ? 'text' : 'password'"
-        @click:append="showPassword = !showPassword"
-      >
-      </v-text-field>
-      <v-btn class="mr-4" @click="userSignIn"> submit </v-btn>
+        :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+        @click:append-inner="showPassword = !showPassword"
+        variant="outlined"
+      ></v-text-field>
+
+      <v-btn class="mt-4" block @click="userSignIn">Submit</v-btn>
     </form>
   </v-card>
 </template>
@@ -44,7 +48,7 @@ export default {
           this.password = "";
         })
         .catch((err) => {
-          console(err.message);
+          console.log(err.message);
         });
     },
   },
